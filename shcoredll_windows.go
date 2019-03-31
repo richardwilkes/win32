@@ -3,8 +3,6 @@ package win32
 import (
 	"syscall"
 	"unsafe"
-
-	"github.com/richardwilkes/toolbox/errs"
 )
 
 var (
@@ -12,16 +10,11 @@ var (
 	getDpiForMonitor = shcore.NewProc("GetDpiForMonitor")
 )
 
-// GetDpiForMonitor https://docs.microsoft.com/en-us/windows/desktop/api/libloaderapi/nf-libloaderapi-getmodulehandlew
-func GetDpiForMonitor(monitor HMONITOR, dpiType int32, dpiX, dpiY *uint32) error {
-	err := getDpiForMonitor.Find()
-	if err != nil {
-		return errs.NewWithCause(getDpiForMonitor.Name, err)
+// GetDpiForMonitor https://docs.microsoft.com/en-us/windows/desktop/api/shellscalingapi/nf-shellscalingapi-getdpiformonitor
+func GetDpiForMonitor(monitor HMONITOR, dpiType int32, dpiX, dpiY *uint32) bool {
+	if err := getDpiForMonitor.Find(); err != nil {
+		return false
 	}
-
-	ret, _, err := getDpiForMonitor.Call(uintptr(monitor), uintptr(dpiType), uintptr(unsafe.Pointer(dpiX)), uintptr(unsafe.Pointer(dpiY)))
-	if ret != 0 {
-		return errs.NewWithCause(getDpiForMonitor.Name, err)
-	}
-	return nil
+	ret, _, _ := getDpiForMonitor.Call(uintptr(monitor), uintptr(dpiType), uintptr(unsafe.Pointer(dpiX)), uintptr(unsafe.Pointer(dpiY))) //nolint:errcheck
+	return ret == 0
 }

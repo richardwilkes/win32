@@ -3,8 +3,6 @@ package win32
 import (
 	"syscall"
 	"unsafe"
-
-	"github.com/richardwilkes/toolbox/errs"
 )
 
 var (
@@ -15,12 +13,9 @@ var (
 )
 
 // CreateDC https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-createdcw
-func CreateDC(driver, device, port LPCWSTR, pdm *DEVMODE) (HDC, error) {
-	h, _, err := createDCW.Call(uintptr(unsafe.Pointer(driver)), uintptr(unsafe.Pointer(device)), uintptr(unsafe.Pointer(port)), uintptr(unsafe.Pointer(pdm)))
-	if h == 0 {
-		return NULL, errs.NewWithCause(createDCW.Name, err)
-	}
-	return HDC(h), nil
+func CreateDC(driver, device, port LPCWSTR, pdm *DEVMODE) HDC {
+	h, _, _ := createDCW.Call(uintptr(unsafe.Pointer(driver)), uintptr(unsafe.Pointer(device)), uintptr(unsafe.Pointer(port)), uintptr(unsafe.Pointer(pdm))) //nolint:errcheck
+	return HDC(h)
 }
 
 // DeleteDC https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-deletedc

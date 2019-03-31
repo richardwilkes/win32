@@ -1,11 +1,6 @@
 package win32
 
-import (
-	"syscall"
-
-	"github.com/richardwilkes/toolbox/errs"
-	"github.com/richardwilkes/toolbox/log/jot"
-)
+import "syscall"
 
 // ToWin32Str converts a Go string to a Windows string.
 func ToWin32Str(in string, emptyReturnsNil bool) *uint16 {
@@ -14,7 +9,6 @@ func ToWin32Str(in string, emptyReturnsNil bool) *uint16 {
 	}
 	out, err := syscall.UTF16PtrFromString(in)
 	if err != nil {
-		jot.Error(errs.NewWithCause("unable to convert string to utf-16", err))
 		var empty [1]uint16
 		out = &empty[0]
 	}
