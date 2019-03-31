@@ -249,6 +249,12 @@ func LoadCursor(instance HINSTANCE, cursorName LPCWSTR) HCURSOR {
 	return HCURSOR(h)
 }
 
+// LoadSystemCursor https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-loadcursorw
+func LoadSystemCursor(instance HINSTANCE, cursorID int) HCURSOR {
+	h, _, _ := loadCursorW.Call(uintptr(instance), uintptr(cursorID)) //nolint:errcheck
+	return HCURSOR(h)
+}
+
 // MoveWindow https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-movewindow
 func MoveWindow(hwnd HWND, x, y, width, height int32, repaint bool) {
 	moveWindow.Call(uintptr(hwnd), uintptr(x), uintptr(y), uintptr(width), uintptr(height), ToSysBool(repaint)) //nolint:errcheck
