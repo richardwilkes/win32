@@ -250,8 +250,8 @@ func LoadCursor(instance HINSTANCE, cursorName LPCWSTR) HCURSOR {
 }
 
 // LoadSystemCursor https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-loadcursorw
-func LoadSystemCursor(instance HINSTANCE, cursorID int) HCURSOR {
-	h, _, _ := loadCursorW.Call(uintptr(instance), uintptr(cursorID)) //nolint:errcheck
+func LoadSystemCursor(cursorID int) HCURSOR {
+	h, _, _ := loadCursorW.Call(0, uintptr(cursorID)) //nolint:errcheck
 	return HCURSOR(h)
 }
 
