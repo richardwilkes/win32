@@ -55,8 +55,8 @@ var (
 	showWindow                    = user32.NewProc("ShowWindow")
 )
 
-// CreateAcceleratorTableW https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-createacceleratortablew
-func CreateAcceleratorTableW(accelList LPACCEL, count int) (HACCEL, error) {
+// CreateAcceleratorTable https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-createacceleratortablew
+func CreateAcceleratorTable(accelList LPACCEL, count int) (HACCEL, error) {
 	ret, _, err := createAcceleratorTableW.Call(uintptr(accelList), uintptr(count))
 	if ret == 0 {
 		return NULL, errs.NewWithCause(createAcceleratorTableW.Name, err)
@@ -96,8 +96,8 @@ func CreateWindowEx(exStyle DWORD, className, windowName LPCWSTR, style DWORD, x
 	return HWND(ret), nil
 }
 
-// DefWindowProcW https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-defwindowprocw
-func DefWindowProcW(hwnd HWND, msg uint32, wparam WPARAM, lparam LPARAM) LRESULT {
+// DefWindowProc https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-defwindowprocw
+func DefWindowProc(hwnd HWND, msg uint32, wparam WPARAM, lparam LPARAM) LRESULT {
 	ret, _, _ := defWindowProcW.Call(uintptr(hwnd), uintptr(msg), uintptr(wparam), uintptr(lparam)) //nolint:errcheck
 	return LRESULT(ret)
 }
@@ -153,12 +153,12 @@ func EnableWindow(hwnd HWND, enable bool) bool {
 }
 
 // EnumDisplayDevicesS https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-enumdisplaydevicesw
-func EnumDisplayDevicesS(device string, devNum DWORD, displayDevice *DISPLAY_DEVICEW, flags DWORD) error {
+func EnumDisplayDevicesS(device string, devNum DWORD, displayDevice *DISPLAY_DEVICE, flags DWORD) error {
 	return EnumDisplayDevices(ToWin32Str(device, true), devNum, displayDevice, flags)
 }
 
 // EnumDisplayDevices https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-enumdisplaydevicesw
-func EnumDisplayDevices(device LPCWSTR, devNum DWORD, displayDevice *DISPLAY_DEVICEW, flags DWORD) error {
+func EnumDisplayDevices(device LPCWSTR, devNum DWORD, displayDevice *DISPLAY_DEVICE, flags DWORD) error {
 	if ret, _, err := enumDisplayDevicesW.Call(uintptr(unsafe.Pointer(device)), uintptr(devNum), uintptr(unsafe.Pointer(displayDevice)), uintptr(flags)); ret == 0 {
 		return errs.NewWithCause(enumDisplayDevicesW.Name, err)
 	}
@@ -176,12 +176,12 @@ func EnumDisplayMonitors(hdc HDC, clip *RECT, callback func(monitor HMONITOR, dc
 }
 
 // EnumDisplaySettingsExS https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-enumdisplaysettingsexw
-func EnumDisplaySettingsExS(deviceName string, modeNum DWORD, devMode *DEVMODEW, flags DWORD) error {
+func EnumDisplaySettingsExS(deviceName string, modeNum DWORD, devMode *DEVMODE, flags DWORD) error {
 	return EnumDisplaySettingsEx(ToWin32Str(deviceName, true), modeNum, devMode, flags)
 }
 
 // EnumDisplaySettingsEx https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-enumdisplaysettingsexw
-func EnumDisplaySettingsEx(deviceName LPCWSTR, modeNum DWORD, devMode *DEVMODEW, flags DWORD) error {
+func EnumDisplaySettingsEx(deviceName LPCWSTR, modeNum DWORD, devMode *DEVMODE, flags DWORD) error {
 	if ret, _, err := enumDisplaySettingsExW.Call(uintptr(unsafe.Pointer(deviceName)), uintptr(modeNum), uintptr(unsafe.Pointer(devMode)), uintptr(flags)); ret == 0 {
 		return errs.NewWithCause(enumDisplaySettingsExW.Name, err)
 	}
@@ -245,16 +245,16 @@ func GetMenuItemCount(hmenu HMENU) (int, error) {
 	return int(ret), nil
 }
 
-// GetMenuItemInfoW https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getmenuiteminfow
-func GetMenuItemInfoW(hmenu HMENU, item uint32, byPosition bool, lpmii *MENUITEMINFOW) error {
+// GetMenuItemInfo https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getmenuiteminfow
+func GetMenuItemInfo(hmenu HMENU, item uint32, byPosition bool, lpmii *MENUITEMINFO) error {
 	if ret, _, err := getMenuItemInfoW.Call(uintptr(hmenu), uintptr(item), ToSysBool(byPosition), uintptr(unsafe.Pointer(lpmii))); ret == 0 {
 		return errs.NewWithCause(getMenuItemInfoW.Name, err)
 	}
 	return nil
 }
 
-// GetMonitorInfoW https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getmonitorinfow
-func GetMonitorInfoW(monitor HMONITOR, pmi *MONITORINFO) error {
+// GetMonitorInfo https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getmonitorinfow
+func GetMonitorInfo(monitor HMONITOR, pmi *MONITORINFO) error {
 	if ret, _, err := getMonitorInfoW.Call(uintptr(monitor), uintptr(unsafe.Pointer(pmi))); ret == 0 {
 		return errs.NewWithCause(getMonitorInfoW.Name, err)
 	}
@@ -281,15 +281,15 @@ func GetWindowRect(hwnd HWND, rect *RECT) error {
 	return nil
 }
 
-// GetWindowTextW https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getwindowtextw
-func GetWindowTextW(hwnd HWND) string {
+// GetWindowText https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getwindowtextw
+func GetWindowText(hwnd HWND) string {
 	var buffer [512]uint16
 	getWindowTextW.Call(uintptr(hwnd), uintptr(unsafe.Pointer(&buffer[0])), uintptr(len(buffer)-1)) //nolint:errcheck
 	return syscall.UTF16ToString(buffer[:])
 }
 
-// InsertMenuItemW https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-insertmenuitemw
-func InsertMenuItemW(hmenu HMENU, item uint32, byPosition bool, lpmi *MENUITEMINFOW) error {
+// InsertMenuItem https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-insertmenuitemw
+func InsertMenuItem(hmenu HMENU, item uint32, byPosition bool, lpmi *MENUITEMINFO) error {
 	if ret, _, err := insertMenuItemW.Call(uintptr(hmenu), uintptr(item), ToSysBool(byPosition), uintptr(unsafe.Pointer(lpmi))); ret == 0 {
 		return errs.NewWithCause(insertMenuItemW.Name, err)
 	}
@@ -323,8 +323,8 @@ func PostQuitMessage(exitCode int32) {
 	postQuitMessage.Call(uintptr(exitCode)) //nolint:errcheck
 }
 
-// RegisterClassExW https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-registerclassexw
-func RegisterClassExW(wndcls *WNDCLASSEXW) (ATOM, error) {
+// RegisterClassEx https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-registerclassexw
+func RegisterClassEx(wndcls *WNDCLASSEX) (ATOM, error) {
 	h, _, err := registerClassExW.Call(uintptr(unsafe.Pointer(wndcls)))
 	if h == 0 {
 		return 0, errs.NewWithCause(registerClassExW.Name, err)
@@ -377,8 +377,8 @@ func SetMenu(hwnd HWND, menu HMENU) error {
 	return nil
 }
 
-// SetMenuItemInfoW https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-setmenuiteminfow
-func SetMenuItemInfoW(menu HMENU, item uint32, byPosition bool, info *MENUITEMINFOW) error {
+// SetMenuItemInfo https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-setmenuiteminfow
+func SetMenuItemInfo(menu HMENU, item uint32, byPosition bool, info *MENUITEMINFO) error {
 	if ret, _, err := setMenuItemInfoW.Call(uintptr(menu), uintptr(item), ToSysBool(byPosition), uintptr(unsafe.Pointer(info))); ret == 0 {
 		return errs.NewWithCause(setMenuItemInfoW.Name, err)
 	}

@@ -14,8 +14,8 @@ var (
 	getDeviceCaps = gdi32.NewProc("GetDeviceCaps")
 )
 
-// CreateDCW https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-createdcw
-func CreateDCW(driver, device, port LPCWSTR, pdm *DEVMODEW) (HDC, error) {
+// CreateDC https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-createdcw
+func CreateDC(driver, device, port LPCWSTR, pdm *DEVMODE) (HDC, error) {
 	h, _, err := createDCW.Call(uintptr(unsafe.Pointer(driver)), uintptr(unsafe.Pointer(device)), uintptr(unsafe.Pointer(port)), uintptr(unsafe.Pointer(pdm)))
 	if h == 0 {
 		return NULL, errs.NewWithCause(createDCW.Name, err)

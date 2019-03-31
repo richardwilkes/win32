@@ -34,8 +34,8 @@ type RECT struct {
 	Bottom int32
 }
 
-// MENUITEMINFOW https://docs.microsoft.com/en-us/windows/desktop/api/winuser/ns-winuser-tagmenuiteminfow
-type MENUITEMINFOW struct { //nolint:maligned
+// MENUITEMINFO https://docs.microsoft.com/en-us/windows/desktop/api/winuser/ns-winuser-tagmenuiteminfow
+type MENUITEMINFO struct { //nolint:maligned
 	Size         uint32
 	Mask         uint32
 	Type         uint32
@@ -50,8 +50,8 @@ type MENUITEMINFOW struct { //nolint:maligned
 	BMPItem      HBITMAP
 }
 
-// WNDCLASSEXW https://docs.microsoft.com/en-us/windows/desktop/api/winuser/ns-winuser-tagwndclassexw
-type WNDCLASSEXW struct {
+// WNDCLASSEX https://docs.microsoft.com/en-us/windows/desktop/api/winuser/ns-winuser-tagwndclassexw
+type WNDCLASSEX struct {
 	Size       uint32
 	Style      uint32
 	WndProc    uintptr
@@ -66,8 +66,8 @@ type WNDCLASSEXW struct {
 	IconSm     syscall.Handle
 }
 
-// DISPLAY_DEVICEW https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/ns-wingdi-_display_devicew
-type DISPLAY_DEVICEW struct {
+// DISPLAY_DEVICE https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/ns-wingdi-_display_devicew
+type DISPLAY_DEVICE struct {
 	Size         uint32
 	DeviceName   [32]uint16
 	DeviceString [128]uint16
@@ -76,8 +76,8 @@ type DISPLAY_DEVICEW struct {
 	DeviceKey    [128]uint16
 }
 
-// DEVMODEW https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/ns-wingdi-_devicemodew
-type DEVMODEW struct {
+// DEVMODE https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/ns-wingdi-_devicemodew
+type DEVMODE struct {
 	DeviceName    [32]uint16
 	SpecVersion   uint16
 	DriverVersion uint16
