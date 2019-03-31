@@ -16,5 +16,5 @@ func GetDpiForMonitor(monitor HMONITOR, dpiType int32, dpiX, dpiY *uint32) bool 
 		return false
 	}
 	ret, _, _ := getDpiForMonitor.Call(uintptr(monitor), uintptr(dpiType), uintptr(unsafe.Pointer(dpiX)), uintptr(unsafe.Pointer(dpiY))) //nolint:errcheck
-	return ret == 0
+	return ret == S_OK
 }

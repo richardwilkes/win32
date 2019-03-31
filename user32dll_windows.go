@@ -205,8 +205,9 @@ func GetMenuItemInfo(hmenu HMENU, item uint32, byPosition bool, lpmii *MENUITEMI
 }
 
 // GetMonitorInfo https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getmonitorinfow
-func GetMonitorInfo(monitor HMONITOR, pmi *MONITORINFO) {
-	getMonitorInfoW.Call(uintptr(monitor), uintptr(unsafe.Pointer(pmi))) //nolint:errcheck
+func GetMonitorInfo(monitor HMONITOR, pmi *MONITORINFO) bool {
+	ret, _, _ := getMonitorInfoW.Call(uintptr(monitor), uintptr(unsafe.Pointer(pmi))) //nolint:errcheck
+	return ret != 0
 }
 
 // GetSystemMetrics https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getsystemmetrics

@@ -4,6 +4,7 @@ package win32
 const (
 	NULL          = 0
 	CW_USEDEFAULT = 0x80000000
+	S_OK          = 0
 )
 
 // https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-loadcursora
