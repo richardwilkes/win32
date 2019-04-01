@@ -307,8 +307,9 @@ func SetMenu(hwnd HWND, menu HMENU) {
 }
 
 // SetMenuItemInfo https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-setmenuiteminfow
-func SetMenuItemInfo(menu HMENU, item uint32, byPosition bool, info *MENUITEMINFO) {
-	setMenuItemInfoW.Call(uintptr(menu), uintptr(item), ToSysBool(byPosition), uintptr(unsafe.Pointer(info))) //nolint:errcheck
+func SetMenuItemInfo(menu HMENU, item uint32, byPosition bool, info *MENUITEMINFO) bool {
+	ret, _, _ := setMenuItemInfoW.Call(uintptr(menu), uintptr(item), ToSysBool(byPosition), uintptr(unsafe.Pointer(info))) //nolint:errcheck
+	return ret != 0
 }
 
 // SetProcessDpiAwarenessContext https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-setprocessdpiawarenesscontext
