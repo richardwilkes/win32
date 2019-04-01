@@ -200,8 +200,9 @@ func GetMenuItemCount(hmenu HMENU) int {
 }
 
 // GetMenuItemInfo https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getmenuiteminfow
-func GetMenuItemInfo(hmenu HMENU, item uint32, byPosition bool, lpmii *MENUITEMINFO) {
-	getMenuItemInfoW.Call(uintptr(hmenu), uintptr(item), ToSysBool(byPosition), uintptr(unsafe.Pointer(lpmii))) //nolint:errcheck
+func GetMenuItemInfo(hmenu HMENU, item uint32, byPosition bool, lpmii *MENUITEMINFO) bool {
+	ret, _, _ := getMenuItemInfoW.Call(uintptr(hmenu), uintptr(item), ToSysBool(byPosition), uintptr(unsafe.Pointer(lpmii))) //nolint:errcheck
+	return ret != 0
 }
 
 // GetMonitorInfo https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getmonitorinfow
