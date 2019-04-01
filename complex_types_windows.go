@@ -2,30 +2,6 @@ package win32
 
 import "syscall"
 
-//nolint:golint
-// https://docs.microsoft.com/en-us/windows/desktop/WinProg/windows-data-types
-type (
-	ATOM                  uint16
-	BOOL                  int16
-	DWORD                 uint32
-	HACCEL                uintptr
-	HBITMAP               uintptr
-	HCURSOR               uintptr
-	HDC                   uintptr
-	HMENU                 uintptr
-	HINSTANCE             uintptr
-	HMONITOR              uintptr
-	HWND                  uintptr
-	LPACCEL               uintptr
-	LPCWSTR               *uint16
-	LPVOID                uintptr
-	LRESULT               uintptr
-	LPARAM                uintptr
-	WORD                  uint16
-	WPARAM                uintptr
-	DPI_AWARENESS_CONTEXT uint32
-)
-
 // RECT https://msdn.microsoft.com/en-us/9439cb6c-f2f7-4c27-b1d7-8ddf16d81fe8
 type RECT struct {
 	Left   int32
