@@ -1,6 +1,9 @@
 package win32
 
-import "syscall"
+import (
+	"syscall"
+	"unsafe"
+)
 
 // ToWin32Str converts a Go string to a Windows string.
 func ToWin32Str(in string, emptyReturnsNil bool) *uint16 {
@@ -13,6 +16,12 @@ func ToWin32Str(in string, emptyReturnsNil bool) *uint16 {
 		out = &empty[0]
 	}
 	return out
+}
+
+// ToSysWin32Str converts a Go string to a Windows string suitable for passing
+// via a syscall.
+func ToSysWin32Str(in string, emptyReturnsNil bool) uintptr {
+	return uintptr(unsafe.Pointer(ToWin32Str(in, emptyReturnsNil)))
 }
 
 // FromBOOL converts a Windows BOOL to a Go bool.
