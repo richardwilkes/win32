@@ -16,6 +16,7 @@ var (
 	destroyAcceleratorTable       = user32.NewProc("DestroyAcceleratorTable")
 	destroyMenu                   = user32.NewProc("DestroyMenu")
 	destroyWindow                 = user32.NewProc("DestroyWindow")
+	dispatchMessageW              = user32.NewProc("DispatchMessageW")
 	drawMenuBar                   = user32.NewProc("DrawMenuBar")
 	enableMenuItem                = user32.NewProc("EnableMenuItem")
 	enableWindow                  = user32.NewProc("EnableWindow")
@@ -31,6 +32,7 @@ var (
 	getMenu                       = user32.NewProc("GetMenu")
 	getMenuItemCount              = user32.NewProc("GetMenuItemCount")
 	getMenuItemInfoW              = user32.NewProc("GetMenuItemInfoW")
+	getMessageW                   = user32.NewProc("GetMessageW")
 	getMonitorInfoW               = user32.NewProc("GetMonitorInfoW")
 	getSystemMetrics              = user32.NewProc("GetSystemMetrics")
 	getWindow                     = user32.NewProc("GetWindow")
@@ -39,6 +41,7 @@ var (
 	insertMenuItemW               = user32.NewProc("InsertMenuItemW")
 	loadCursorW                   = user32.NewProc("LoadCursorW")
 	moveWindow                    = user32.NewProc("MoveWindow")
+	postMessageW                  = user32.NewProc("PostMessageW")
 	postQuitMessage               = user32.NewProc("PostQuitMessage")
 	registerClassExW              = user32.NewProc("RegisterClassExW")
 	registerWindowMessageW        = user32.NewProc("RegisterWindowMessageW")
@@ -51,6 +54,7 @@ var (
 	setWindowPos                  = user32.NewProc("SetWindowPos")
 	setWindowTextW                = user32.NewProc("SetWindowTextW")
 	showWindow                    = user32.NewProc("ShowWindow")
+	translateMessage              = user32.NewProc("TranslateMessage")
 )
 
 // CreateAcceleratorTable https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-createacceleratortablew
@@ -107,6 +111,12 @@ func DestroyMenu(menu HMENU) {
 // DestroyWindow https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-destroywindow
 func DestroyWindow(hwnd HWND) {
 	destroyWindow.Call(uintptr(hwnd)) //nolint:errcheck
+}
+
+// DispatchMessage https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-dispatchmessage
+func DispatchMessage(msg *MSG) LRESULT {
+	ret, _, _ := dispatchMessageW.Call(uintptr(unsafe.Pointer(msg))) //nolint:errcheck
+	return LRESULT(ret)
 }
 
 // DrawMenuBar https://docs.microsoft.com/en-us/windows/desktop/api/Winuser/nf-winuser-drawmenubar
@@ -205,6 +215,20 @@ func GetMenuItemInfo(hmenu HMENU, item uint32, byPosition bool, lpmii *MENUITEMI
 	return ret != 0
 }
 
+// GetMessage https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getmessagew
+func GetMessage(msg *MSG, hwnd HWND, msgFilterMin, msgFilterMax uint32) (quit bool, err error) {
+	var ret uintptr
+	ret, _, err = getMessageW.Call(uintptr(unsafe.Pointer(msg)), uintptr(hwnd), uintptr(msgFilterMin), uintptr(msgFilterMax)) //nolint:errcheck
+	if ret == 0 {
+		return true, nil
+	}
+	result := int32(ret)
+	if result < 0 {
+		return false, err
+	}
+	return false, nil
+}
+
 // GetMonitorInfo https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getmonitorinfow
 func GetMonitorInfo(monitor HMONITOR, pmi *MONITORINFO) bool {
 	ret, _, _ := getMonitorInfoW.Call(uintptr(monitor), uintptr(unsafe.Pointer(pmi))) //nolint:errcheck
@@ -260,6 +284,14 @@ func LoadSystemCursor(cursorID int) HCURSOR {
 // MoveWindow https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-movewindow
 func MoveWindow(hwnd HWND, x, y, width, height int32, repaint bool) {
 	moveWindow.Call(uintptr(hwnd), uintptr(x), uintptr(y), uintptr(width), uintptr(height), ToSysBool(repaint)) //nolint:errcheck
+}
+
+// PostMessage https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-postmessagew
+func PostMessage(hwnd HWND, msg uint32, wParam WPARAM, lParam LPARAM) error {
+	if ret, _, err := postMessageW.Call(uintptr(hwnd), uintptr(msg), uintptr(wParam), uintptr(lParam)); ret == 0 {
+		return err
+	}
+	return nil
 }
 
 // PostQuitMessage https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-postquitmessage
@@ -336,4 +368,9 @@ func SetWindowText(hwnd HWND, title LPCWSTR) {
 func ShowWindow(hwnd HWND, cmd int32) bool {
 	ret, _, _ := showWindow.Call(uintptr(hwnd), uintptr(cmd)) //nolint:errcheck
 	return ret != 0
+}
+
+// TranslateMessage https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-translatemessage
+func TranslateMessage(msg *MSG) {
+	translateMessage.Call(uintptr(unsafe.Pointer(msg)))
 }

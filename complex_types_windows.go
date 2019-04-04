@@ -10,6 +10,23 @@ type RECT struct {
 	Bottom int32
 }
 
+// POINT https://docs.microsoft.com/en-us/previous-versions//dd162805(v=vs.85)
+type POINT struct {
+	X int32
+	Y int32
+}
+
+// MSG https://docs.microsoft.com/en-us/windows/desktop/api/winuser/ns-winuser-tagmsg
+type MSG struct {
+	HWND    HWND
+	Message uint32
+	WParam  WPARAM
+	LParam  LPARAM
+	Time    DWORD
+	Pt      POINT
+	Private DWORD
+}
+
 // MENUITEMINFO https://docs.microsoft.com/en-us/windows/desktop/api/winuser/ns-winuser-tagmenuiteminfow
 type MENUITEMINFO struct { //nolint:maligned
 	Size         uint32
