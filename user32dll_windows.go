@@ -43,6 +43,7 @@ var (
 	moveWindow                    = user32.NewProc("MoveWindow")
 	postMessageW                  = user32.NewProc("PostMessageW")
 	postQuitMessage               = user32.NewProc("PostQuitMessage")
+	postThreadMessageW            = user32.NewProc("PostThreadMessageW")
 	registerClassExW              = user32.NewProc("RegisterClassExW")
 	registerWindowMessageW        = user32.NewProc("RegisterWindowMessageW")
 	setActiveWindow               = user32.NewProc("SetActiveWindow")
@@ -297,6 +298,14 @@ func PostMessage(hwnd HWND, msg uint32, wParam WPARAM, lParam LPARAM) error {
 // PostQuitMessage https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-postquitmessage
 func PostQuitMessage(exitCode int32) {
 	postQuitMessage.Call(uintptr(exitCode)) //nolint:errcheck
+}
+
+// PostThreadMessage https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-postthreadmessagew
+func PostThreadMessage(threadID DWORD, msg uint32, wParam WPARAM, lParam LPARAM) error {
+	if ret, _, err := postThreadMessageW.Call(uintptr(threadID), uintptr(msg), uintptr(wParam), uintptr(lParam)); ret == 0 {
+		return err
+	}
+	return nil
 }
 
 // RegisterClassEx https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-registerclassexw
