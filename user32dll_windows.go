@@ -7,6 +7,7 @@ import (
 
 var (
 	user32                        = syscall.NewLazyDLL("user32.dll")
+	adjustWindowRectEx            = user32.NewProc("AdjustWindowRectEx")
 	createAcceleratorTableW       = user32.NewProc("CreateAcceleratorTableW")
 	createMenu                    = user32.NewProc("CreateMenu")
 	createPopupMenu               = user32.NewProc("CreatePopupMenu")
@@ -42,6 +43,7 @@ var (
 	isIconic                      = user32.NewProc("IsIconic")
 	isZoomed                      = user32.NewProc("IsZoomed")
 	loadCursorW                   = user32.NewProc("LoadCursorW")
+	mapWindowPoints               = user32.NewProc("MapWindowPoints")
 	moveWindow                    = user32.NewProc("MoveWindow")
 	postMessageW                  = user32.NewProc("PostMessageW")
 	postQuitMessage               = user32.NewProc("PostQuitMessage")
@@ -59,6 +61,11 @@ var (
 	showWindow                    = user32.NewProc("ShowWindow")
 	translateMessage              = user32.NewProc("TranslateMessage")
 )
+
+// AdjustWindowRectEx https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-adjustwindowrectex
+func AdjustWindowRectEx(rect *RECT, style DWORD, hasMenu bool, exStyle DWORD) {
+	adjustWindowRectEx.Call(uintptr(unsafe.Pointer(rect)), uintptr(style), uintptr(ToSysBool(hasMenu)), uintptr(exStyle)) //nolint:errcheck
+}
 
 // CreateAcceleratorTable https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-createacceleratortablew
 func CreateAcceleratorTable(accelList LPACCEL, count int) HACCEL {
@@ -294,6 +301,18 @@ func LoadCursor(instance HINSTANCE, cursorName LPCWSTR) HCURSOR {
 func LoadSystemCursor(cursorID int) HCURSOR {
 	h, _, _ := loadCursorW.Call(0, uintptr(cursorID)) //nolint:errcheck
 	return HCURSOR(h)
+}
+
+// MapWindowPoints https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-mapwindowpoints
+func MapWindowPoints(from, to HWND, points []POINT) int32 {
+	ret, _, _ := mapWindowPoints.Call(uintptr(from), uintptr(to), uintptr(unsafe.Pointer(&points[0])), uintptr(len(points)))
+	return int32(ret)
+}
+
+// MapWindowRect https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-mapwindowpoints
+func MapWindowRect(from, to HWND, rect *RECT) int32 {
+	ret, _, _ := mapWindowPoints.Call(uintptr(from), uintptr(to), uintptr(unsafe.Pointer(rect)), 2)
+	return int32(ret)
 }
 
 // MoveWindow https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-movewindow
