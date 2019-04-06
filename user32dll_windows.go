@@ -39,6 +39,8 @@ var (
 	getWindowRect                 = user32.NewProc("GetWindowRect")
 	getWindowTextW                = user32.NewProc("GetWindowTextW")
 	insertMenuItemW               = user32.NewProc("InsertMenuItemW")
+	isIconic                      = user32.NewProc("IsIconic")
+	isZoomed                      = user32.NewProc("IsZoomed")
 	loadCursorW                   = user32.NewProc("LoadCursorW")
 	moveWindow                    = user32.NewProc("MoveWindow")
 	postMessageW                  = user32.NewProc("PostMessageW")
@@ -263,6 +265,18 @@ func GetWindowText(hwnd HWND) string {
 // InsertMenuItem https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-insertmenuitemw
 func InsertMenuItem(hmenu HMENU, item uint32, byPosition bool, lpmi *MENUITEMINFO) {
 	insertMenuItemW.Call(uintptr(hmenu), uintptr(item), ToSysBool(byPosition), uintptr(unsafe.Pointer(lpmi))) //nolint:errcheck
+}
+
+// IsIconic https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-isiconic
+func IsIconic(hwnd HWND) bool {
+	ret, _, _ := isIconic.Call(uintptr(hwnd)) //nolint:errcheck
+	return ret != 0
+}
+
+// IsZoomed https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-iszoomed
+func IsZoomed(hwnd HWND) bool {
+	ret, _, _ := isZoomed.Call(uintptr(hwnd)) //nolint:errcheck
+	return ret != 0
 }
 
 // LoadCursorS https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-loadcursorw
