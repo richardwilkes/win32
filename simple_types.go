@@ -12,6 +12,7 @@ type (
 	HCURSOR               uintptr
 	HDC                   uintptr
 	HGDIOBJ               uintptr
+	HGLOBAL               uintptr
 	HMENU                 uintptr
 	HINSTANCE             uintptr
 	HMONITOR              uintptr

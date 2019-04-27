@@ -8,6 +8,7 @@ import (
 var (
 	user32                        = syscall.NewLazyDLL("user32.dll")
 	adjustWindowRectEx            = user32.NewProc("AdjustWindowRectEx")
+	closeClipboard                = user32.NewProc("CloseClipboard")
 	createAcceleratorTableW       = user32.NewProc("CreateAcceleratorTableW")
 	createMenu                    = user32.NewProc("CreateMenu")
 	createPopupMenu               = user32.NewProc("CreatePopupMenu")
@@ -19,14 +20,19 @@ var (
 	destroyWindow                 = user32.NewProc("DestroyWindow")
 	dispatchMessageW              = user32.NewProc("DispatchMessageW")
 	drawMenuBar                   = user32.NewProc("DrawMenuBar")
+	emptyClipboard                = user32.NewProc("EmptyClipboard")
 	enableMenuItem                = user32.NewProc("EnableMenuItem")
 	enableWindow                  = user32.NewProc("EnableWindow")
+	enumClipboardFormats          = user32.NewProc("EnumClipboardFormats")
 	enumDisplayDevicesW           = user32.NewProc("EnumDisplayDevicesW")
 	enumDisplayMonitors           = user32.NewProc("EnumDisplayMonitors")
 	enumDisplaySettingsExW        = user32.NewProc("EnumDisplaySettingsExW")
 	enumWindows                   = user32.NewProc("EnumWindows")
 	getActiveWindow               = user32.NewProc("GetActiveWindow")
 	getClientRect                 = user32.NewProc("GetClientRect")
+	getClipboardData              = user32.NewProc("GetClipboardData")
+	getClipboardFormatNameA       = user32.NewProc("getClipboardFormatNameA")
+	getClipboardSequenceNumber    = user32.NewProc("GetClipboardSequenceNumber")
 	getDC                         = user32.NewProc("GetDC")
 	getDpiForSystem               = user32.NewProc("GetDpiForSystem")
 	getFocus                      = user32.NewProc("GetFocus")
@@ -46,6 +52,7 @@ var (
 	loadCursorW                   = user32.NewProc("LoadCursorW")
 	mapWindowPoints               = user32.NewProc("MapWindowPoints")
 	moveWindow                    = user32.NewProc("MoveWindow")
+	openClipboard                 = user32.NewProc("OpenClipboard")
 	postMessageW                  = user32.NewProc("PostMessageW")
 	postQuitMessage               = user32.NewProc("PostQuitMessage")
 	postThreadMessageW            = user32.NewProc("PostThreadMessageW")
@@ -53,6 +60,7 @@ var (
 	registerWindowMessageW        = user32.NewProc("RegisterWindowMessageW")
 	releaseDC                     = user32.NewProc("ReleaseDC")
 	setActiveWindow               = user32.NewProc("SetActiveWindow")
+	setClipboardData              = user32.NewProc("SetClipboardData")
 	setFocus                      = user32.NewProc("SetFocus")
 	setForegroundWindow           = user32.NewProc("SetForegroundWindow")
 	setMenu                       = user32.NewProc("SetMenu")
@@ -67,6 +75,12 @@ var (
 // AdjustWindowRectEx https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-adjustwindowrectex
 func AdjustWindowRectEx(rect *RECT, style DWORD, hasMenu bool, exStyle DWORD) {
 	adjustWindowRectEx.Call(uintptr(unsafe.Pointer(rect)), uintptr(style), uintptr(ToSysBool(hasMenu)), uintptr(exStyle)) //nolint:errcheck
+}
+
+// CloseClipboard https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-closeclipboard
+func CloseClipboard() bool {
+	ret, _, _ := closeClipboard.Call()
+	return ret != 0
 }
 
 // CreateAcceleratorTable https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-createacceleratortablew
@@ -136,6 +150,12 @@ func DrawMenuBar(hwnd HWND) {
 	drawMenuBar.Call(uintptr(hwnd)) //nolint:errcheck
 }
 
+// EmptyClipboard https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-emptyclipboard
+func EmptyClipboard() bool {
+	ret, _, _ := emptyClipboard.Call()
+	return ret != 0
+}
+
 // EnableMenuItem https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-enablemenuitem
 func EnableMenuItem(hmenu HMENU, idEnableItem, enable int) int {
 	ret, _, _ := enableMenuItem.Call(uintptr(hmenu), uintptr(idEnableItem), uintptr(enable)) //nolint:errcheck
@@ -146,6 +166,12 @@ func EnableMenuItem(hmenu HMENU, idEnableItem, enable int) int {
 func EnableWindow(hwnd HWND, enable bool) bool {
 	ret, _, _ := enableWindow.Call(uintptr(hwnd), ToSysBool(enable)) //nolint:errcheck
 	return ret != 0
+}
+
+// EnumClipboardFormats https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-enumclipboardformats
+func EnumClipboardFormats(format uint) uint {
+	ret, _, _ := enumClipboardFormats.Call(uintptr(format))
+	return uint(ret)
 }
 
 // EnumDisplayDevicesS https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-enumdisplaydevicesw
@@ -189,6 +215,29 @@ func GetActiveWindow() HWND {
 // GetClientRect https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getclientrect
 func GetClientRect(hwnd HWND, rect *RECT) {
 	getClientRect.Call(uintptr(hwnd), uintptr(unsafe.Pointer(rect))) //nolint:errcheck
+}
+
+// GetClipboardData https://docs.microsoft.com/en-us/windows/desktop/api/Winuser/nf-winuser-getclipboarddata
+func GetClipboardData(format uint) HANDLE {
+	ret, _, _ := getClipboardData.Call(uintptr(format))
+	return HANDLE(ret)
+}
+
+// GetClipboardFormatName https://docs.microsoft.com/en-us/windows/desktop/api/Winuser/nf-winuser-getclipboardformatnamea
+func GetClipboardFormatName(format uint) string {
+	var buffer [256]byte
+	if ret, _, _ := getClipboardFormatNameA.Call(uintptr(format), uintptr(unsafe.Pointer(&buffer[0])), uintptr(len(buffer)-1)); ret != 0 {
+		str := make([]byte, ret)
+		copy(str, buffer[:])
+		return string(str)
+	}
+	return ""
+}
+
+// GetClipboardSequenceNumber https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getclipboardsequencenumber
+func GetClipboardSequenceNumber() int {
+	ret, _, _ := getClipboardSequenceNumber.Call()
+	return int(ret)
 }
 
 // GetDC https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getdc
@@ -328,6 +377,12 @@ func MoveWindow(hwnd HWND, x, y, width, height int32, repaint bool) {
 	moveWindow.Call(uintptr(hwnd), uintptr(x), uintptr(y), uintptr(width), uintptr(height), ToSysBool(repaint)) //nolint:errcheck
 }
 
+// OpenClipboard https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-openclipboard
+func OpenClipboard(hwnd HWND) bool {
+	ret, _, _ := openClipboard.Call(uintptr(hwnd))
+	return ret != 0
+}
+
 // PostMessage https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-postmessagew
 func PostMessage(hwnd HWND, msg uint32, wParam WPARAM, lParam LPARAM) error {
 	if ret, _, err := postMessageW.Call(uintptr(hwnd), uintptr(msg), uintptr(wParam), uintptr(lParam)); ret == 0 {
@@ -375,6 +430,12 @@ func ReleaseDC(hWnd HWND, hDC HDC) bool {
 // SetActiveWindow https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-setactivewindow
 func SetActiveWindow(hwnd HWND) {
 	setActiveWindow.Call(uintptr(hwnd)) //nolint:errcheck
+}
+
+// SetClipboardData https://docs.microsoft.com/en-us/windows/desktop/api/Winuser/nf-winuser-setclipboarddata
+func SetClipboardData(format uint, data HANDLE) bool {
+	ret, _, _ := setClipboardData.Call(uintptr(format), uintptr(data))
+	return ret != 0
 }
 
 // SetFocus https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-setfocus
