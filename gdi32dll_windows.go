@@ -3,13 +3,16 @@ package win32
 import (
 	"syscall"
 	"unsafe"
+
+	"github.com/richardwilkes/toolbox/errs"
 )
 
 var (
-	gdi32         = syscall.NewLazyDLL("gdi32.dll")
-	createDCW     = gdi32.NewProc("CreateDCW")
-	deleteDC      = gdi32.NewProc("DeleteDC")
-	getDeviceCaps = gdi32.NewProc("GetDeviceCaps")
+	gdi32            = syscall.NewLazyDLL("gdi32.dll")
+	createDCW        = gdi32.NewProc("CreateDCW")
+	createDIBSection = gdi32.NewProc("CreateDIBSection")
+	deleteDC         = gdi32.NewProc("DeleteDC")
+	getDeviceCaps    = gdi32.NewProc("GetDeviceCaps")
 )
 
 // CreateDCS https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-createdcw
@@ -21,6 +24,18 @@ func CreateDCS(driver, device, port string, pdm *DEVMODE) HDC {
 func CreateDC(driver, device, port LPCWSTR, pdm *DEVMODE) HDC {
 	h, _, _ := createDCW.Call(uintptr(unsafe.Pointer(driver)), uintptr(unsafe.Pointer(device)), uintptr(unsafe.Pointer(port)), uintptr(unsafe.Pointer(pdm))) //nolint:errcheck
 	return HDC(h)
+}
+
+// CreateDIBSection https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-createdibsection
+func CreateDIBSection(hdc HDC, pbmi *BITMAPINFOHEADER, usage uint32, ppvBits *unsafe.Pointer, hSection HANDLE, offset uint32) (HBITMAP, error) {
+	ret, _, _ := createDIBSection.Call(uintptr(hdc), uintptr(unsafe.Pointer(pbmi)), uintptr(usage), uintptr(unsafe.Pointer(ppvBits)), uintptr(hSection), uintptr(offset))
+	if ret == ERROR_INVALID_PARAMETER {
+		return 0, errs.New("invalid parameter")
+	}
+	if ret == 0 {
+		return 0, errs.New("unable to create DIB section")
+	}
+	return HBITMAP(ret), nil
 }
 
 // DeleteDC https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-deletedc

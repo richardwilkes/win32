@@ -7,6 +7,7 @@ type (
 	BOOL                  int16
 	DWORD                 uint32
 	HACCEL                uintptr
+	HANDLE                uintptr
 	HBITMAP               uintptr
 	HCURSOR               uintptr
 	HDC                   uintptr

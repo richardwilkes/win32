@@ -2,9 +2,10 @@ package win32
 
 // Miscellaneous
 const (
-	NULL          = 0
-	CW_USEDEFAULT = 0x80000000
-	S_OK          = 0
+	NULL                    = 0
+	CW_USEDEFAULT           = 0x80000000
+	S_OK                    = 0
+	ERROR_INVALID_PARAMETER = 87
 )
 
 // https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-loadcursora
@@ -584,4 +585,20 @@ const (
 	GW_OWNER
 	GW_CHILD
 	GW_ENABLEDPOPUP
+)
+
+// Bitmap compression formats
+const (
+	BI_RGB = iota
+	BI_RLE8
+	BI_RLE4
+	BI_BITFIELDS
+	BI_JPEG
+	BI_PNG
+)
+
+// Bitmap color table usage
+const (
+	DIB_RGB_COLORS = iota
+	DIB_PAL_COLORS
 )

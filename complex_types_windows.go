@@ -27,6 +27,58 @@ type MSG struct {
 	Private DWORD
 }
 
+// CIEXYZ https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/ns-wingdi-tagciexyz
+type CIEXYZ struct {
+	CiexyzX int32
+	CiexyzY int32
+	CiexyzZ int32
+}
+
+// CIEXYZTRIPLE https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/ns-wingdi-tagicexyztriple
+type CIEXYZTRIPLE struct {
+	CiexyzRed   CIEXYZ
+	CiexyzGreen CIEXYZ
+	CiexyzBlue  CIEXYZ
+}
+
+// BITMAPINFOHEADER https://docs.microsoft.com/en-us/previous-versions/dd183376(v=vs.85)
+type BITMAPINFOHEADER struct {
+	BiSize          uint32
+	BiWidth         int32
+	BiHeight        int32
+	BiPlanes        uint16
+	BiBitCount      uint16
+	BiCompression   uint32
+	BiSizeImage     uint32
+	BiXPelsPerMeter int32
+	BiYPelsPerMeter int32
+	BiClrUsed       uint32
+	BiClrImportant  uint32
+}
+
+// BITMAPV4HEADER https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/ns-wingdi-bitmapv4header
+type BITMAPV4HEADER struct {
+	BITMAPINFOHEADER
+	BV4RedMask    uint32
+	BV4GreenMask  uint32
+	BV4BlueMask   uint32
+	BV4AlphaMask  uint32
+	BV4CSType     uint32
+	BV4Endpoints  CIEXYZTRIPLE
+	BV4GammaRed   uint32
+	BV4GammaGreen uint32
+	BV4GammaBlue  uint32
+}
+
+// BITMAPV5HEADER https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/ns-wingdi-bitmapv5header
+type BITMAPV5HEADER struct {
+	BITMAPV4HEADER
+	BV5Intent      uint32
+	BV5ProfileData uint32
+	BV5ProfileSize uint32
+	BV5Reserved    uint32
+}
+
 // MENUITEMINFO https://docs.microsoft.com/en-us/windows/desktop/api/winuser/ns-winuser-tagmenuiteminfow
 type MENUITEMINFO struct { //nolint:maligned
 	Size         uint32

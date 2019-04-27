@@ -27,6 +27,7 @@ var (
 	enumWindows                   = user32.NewProc("EnumWindows")
 	getActiveWindow               = user32.NewProc("GetActiveWindow")
 	getClientRect                 = user32.NewProc("GetClientRect")
+	getDC                         = user32.NewProc("GetDC")
 	getDpiForSystem               = user32.NewProc("GetDpiForSystem")
 	getFocus                      = user32.NewProc("GetFocus")
 	getForegroundWindow           = user32.NewProc("GetForegroundWindow")
@@ -50,6 +51,7 @@ var (
 	postThreadMessageW            = user32.NewProc("PostThreadMessageW")
 	registerClassExW              = user32.NewProc("RegisterClassExW")
 	registerWindowMessageW        = user32.NewProc("RegisterWindowMessageW")
+	releaseDC                     = user32.NewProc("ReleaseDC")
 	setActiveWindow               = user32.NewProc("SetActiveWindow")
 	setFocus                      = user32.NewProc("SetFocus")
 	setForegroundWindow           = user32.NewProc("SetForegroundWindow")
@@ -187,6 +189,12 @@ func GetActiveWindow() HWND {
 // GetClientRect https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getclientrect
 func GetClientRect(hwnd HWND, rect *RECT) {
 	getClientRect.Call(uintptr(hwnd), uintptr(unsafe.Pointer(rect))) //nolint:errcheck
+}
+
+// GetDC https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getdc
+func GetDC(hwnd HWND) HDC {
+	ret, _, _ := getDC.Call(uintptr(hwnd))
+	return HDC(ret)
 }
 
 // GetDpiForSystem https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getdpiforsystem
@@ -356,6 +364,12 @@ func RegisterWindowMessageS(name string) uint32 {
 func RegisterWindowMessage(name LPCWSTR) uint32 {
 	ret, _, _ := registerWindowMessageW.Call(uintptr(unsafe.Pointer(name))) //nolint:errcheck
 	return uint32(ret)
+}
+
+// ReleaseDC https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-releasedc
+func ReleaseDC(hWnd HWND, hDC HDC) bool {
+	ret, _, _ := releaseDC.Call(uintptr(hWnd), uintptr(hDC))
+	return ret != 0
 }
 
 // SetActiveWindow https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-setactivewindow
