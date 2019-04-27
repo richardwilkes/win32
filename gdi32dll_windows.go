@@ -12,6 +12,8 @@ var (
 	createDCW        = gdi32.NewProc("CreateDCW")
 	createDIBSection = gdi32.NewProc("CreateDIBSection")
 	deleteDC         = gdi32.NewProc("DeleteDC")
+	deleteObject     = gdi32.NewProc("DeleteObject")
+	gdiFlush         = gdi32.NewProc("GdiFlush")
 	getDeviceCaps    = gdi32.NewProc("GetDeviceCaps")
 )
 
@@ -41,6 +43,18 @@ func CreateDIBSection(hdc HDC, pbmi *BITMAPINFOHEADER, usage uint32, ppvBits *un
 // DeleteDC https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-deletedc
 func DeleteDC(hdc HDC) bool {
 	ret, _, _ := deleteDC.Call(uintptr(hdc)) //nolint:errcheck
+	return ret != 0
+}
+
+// DeleteObject https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-deleteobject
+func DeleteObject(obj HGDIOBJ) bool {
+	ret, _, _ := deleteObject.Call(uintptr(obj)) //nolint:errcheck
+	return ret != 0
+}
+
+// GdiFlush https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-gdiflush
+func GdiFlush() bool {
+	ret, _, _ := gdiFlush.Call()
 	return ret != 0
 }
 

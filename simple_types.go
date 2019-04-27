@@ -11,6 +11,7 @@ type (
 	HBITMAP               uintptr
 	HCURSOR               uintptr
 	HDC                   uintptr
+	HGDIOBJ               uintptr
 	HMENU                 uintptr
 	HINSTANCE             uintptr
 	HMONITOR              uintptr
