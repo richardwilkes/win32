@@ -9,13 +9,26 @@ import (
 
 var (
 	gdi32            = syscall.NewLazyDLL("gdi32.dll")
+	beginPath        = gdi32.NewProc("BeginPath")
+	closeFigure      = gdi32.NewProc("CloseFigure")
 	createDCW        = gdi32.NewProc("CreateDCW")
 	createDIBSection = gdi32.NewProc("CreateDIBSection")
 	deleteDC         = gdi32.NewProc("DeleteDC")
 	deleteObject     = gdi32.NewProc("DeleteObject")
+	endPath          = gdi32.NewProc("EndPath")
 	gdiFlush         = gdi32.NewProc("GdiFlush")
 	getDeviceCaps    = gdi32.NewProc("GetDeviceCaps")
 )
+
+// BeginPath https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-beginpath
+func BeginPath(hdc HDC) {
+	beginPath.Call(uintptr(hdc))
+}
+
+// CloseFigure https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-closefigure
+func CloseFigure(hdc HDC) {
+	closeFigure.Call(uintptr(hdc))
+}
 
 // CreateDCS https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-createdcw
 func CreateDCS(driver, device, port string, pdm *DEVMODE) HDC {
@@ -50,6 +63,11 @@ func DeleteDC(hdc HDC) bool {
 func DeleteObject(obj HGDIOBJ) bool {
 	ret, _, _ := deleteObject.Call(uintptr(obj)) //nolint:errcheck
 	return ret != 0
+}
+
+// EndPath https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-endpath
+func EndPath(hdc HDC) {
+	endPath.Call(uintptr(hdc))
 }
 
 // GdiFlush https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-gdiflush

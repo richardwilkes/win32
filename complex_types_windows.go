@@ -170,3 +170,24 @@ type ACCEL struct {
 	Key     WORD
 	Cmd     WORD
 }
+
+// WINDOWPOS https://docs.microsoft.com/en-us/windows/desktop/api/winuser/ns-winuser-tagwindowpos
+type WINDOWPOS struct {
+	HwndInsertAfter HWND
+	Hwnd            HWND
+	X               int32
+	Y               int32
+	CX              int32
+	CY              int32
+	Flags           uint32
+}
+
+// PAINTSTRUCT https://docs.microsoft.com/en-us/windows/desktop/api/winuser/ns-winuser-tagpaintstruct
+type PAINTSTRUCT struct {
+	Hdc         HDC
+	FErase      BOOL
+	RcPaint     RECT
+	FRestore    BOOL
+	FIncUpdate  BOOL
+	RgbReserved [32]byte
+}

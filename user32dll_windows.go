@@ -8,6 +8,7 @@ import (
 var (
 	user32                        = syscall.NewLazyDLL("user32.dll")
 	adjustWindowRectEx            = user32.NewProc("AdjustWindowRectEx")
+	beginPaint                    = user32.NewProc("BeginPaint")
 	closeClipboard                = user32.NewProc("CloseClipboard")
 	createAcceleratorTableW       = user32.NewProc("CreateAcceleratorTableW")
 	createMenu                    = user32.NewProc("CreateMenu")
@@ -23,6 +24,7 @@ var (
 	emptyClipboard                = user32.NewProc("EmptyClipboard")
 	enableMenuItem                = user32.NewProc("EnableMenuItem")
 	enableWindow                  = user32.NewProc("EnableWindow")
+	endPaint                      = user32.NewProc("EndPaint")
 	enumClipboardFormats          = user32.NewProc("EnumClipboardFormats")
 	enumDisplayDevicesW           = user32.NewProc("EnumDisplayDevicesW")
 	enumDisplayMonitors           = user32.NewProc("EnumDisplayMonitors")
@@ -47,6 +49,7 @@ var (
 	getWindowRect                 = user32.NewProc("GetWindowRect")
 	getWindowTextW                = user32.NewProc("GetWindowTextW")
 	insertMenuItemW               = user32.NewProc("InsertMenuItemW")
+	invalidateRect                = user32.NewProc("InvalidateRect")
 	isIconic                      = user32.NewProc("IsIconic")
 	isZoomed                      = user32.NewProc("IsZoomed")
 	loadCursorW                   = user32.NewProc("LoadCursorW")
@@ -75,6 +78,12 @@ var (
 // AdjustWindowRectEx https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-adjustwindowrectex
 func AdjustWindowRectEx(rect *RECT, style DWORD, hasMenu bool, exStyle DWORD) {
 	adjustWindowRectEx.Call(uintptr(unsafe.Pointer(rect)), uintptr(style), uintptr(ToSysBool(hasMenu)), uintptr(exStyle)) //nolint:errcheck
+}
+
+// BeginPaint https://docs.microsoft.com/en-us/windows/desktop/api/Winuser/nf-winuser-beginpaint
+func BeginPaint(hwnd HWND, ps *PAINTSTRUCT) HDC {
+	ret, _, _ := beginPaint.Call(uintptr(hwnd), uintptr(unsafe.Pointer(ps)))
+	return HDC(ret)
 }
 
 // CloseClipboard https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-closeclipboard
@@ -166,6 +175,11 @@ func EnableMenuItem(hmenu HMENU, idEnableItem, enable int) int {
 func EnableWindow(hwnd HWND, enable bool) bool {
 	ret, _, _ := enableWindow.Call(uintptr(hwnd), ToSysBool(enable)) //nolint:errcheck
 	return ret != 0
+}
+
+// EndPaint https://docs.microsoft.com/en-us/windows/desktop/api/Winuser/nf-winuser-endpaint
+func EndPaint(hwnd HWND, ps *PAINTSTRUCT) {
+	endPaint.Call(uintptr(hwnd), uintptr(unsafe.Pointer(ps)))
 }
 
 // EnumClipboardFormats https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-enumclipboardformats
@@ -329,6 +343,11 @@ func GetWindowText(hwnd HWND) string {
 // InsertMenuItem https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-insertmenuitemw
 func InsertMenuItem(hmenu HMENU, item uint32, byPosition bool, lpmi *MENUITEMINFO) {
 	insertMenuItemW.Call(uintptr(hmenu), uintptr(item), ToSysBool(byPosition), uintptr(unsafe.Pointer(lpmi))) //nolint:errcheck
+}
+
+// InvalidateRect https://docs.microsoft.com/en-us/windows/desktop/api/Winuser/nf-winuser-invalidaterect
+func InvalidateRect(hwnd HWND, rect *RECT, erase bool) {
+	invalidateRect.Call(uintptr(hwnd), uintptr(unsafe.Pointer(rect)), ToSysBool(erase))
 }
 
 // IsIconic https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-isiconic
