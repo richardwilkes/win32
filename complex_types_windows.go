@@ -201,3 +201,54 @@ type XFORM struct {
 	EDx  float32
 	EDy  float32
 }
+
+// LOGFONT https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/ns-wingdi-taglogfontw
+type LOGFONT struct {
+	LfHeight         int32
+	LfWidth          int32
+	LfEscapement     int32
+	LfOrientation    int32
+	LfWeight         int32
+	LfItalic         byte
+	LfUnderline      byte
+	LfStrikeOut      byte
+	LfCharSet        byte
+	LfOutPrecision   byte
+	LfClipPrecision  byte
+	LfQuality        byte
+	LfPitchAndFamily byte
+	LfFaceName       [LF_FACESIZE]uint16
+}
+
+// TEXTMETRIC https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/ns-wingdi-tagtextmetrica
+type TEXTMETRIC struct {
+	TmHeight           int32
+	TmAscent           int32
+	TmDescent          int32
+	TmInternalLeading  int32
+	TmExternalLeading  int32
+	TmAveCharWidth     int32
+	TmMaxCharWidth     int32
+	TmWeight           int32
+	TmOverhang         int32
+	TmDigitizedAspectX int32
+	TmDigitizedAspectY int32
+	TmFirstChar        uint16
+	TmLastChar         uint16
+	TmDefaultChar      uint16
+	TmBreakChar        uint16
+	TmItalic           byte
+	TmUnderlined       byte
+	TmStruckOut        byte
+	TmPitchAndFamily   byte
+	TmCharSet          byte
+}
+
+// NEWTEXTMETRIC https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/ns-wingdi-tagnewtextmetrica
+type NEWTEXTMETRIC struct {
+	TEXTMETRIC
+	NtmFlags      uint32
+	NtmSizeEM     uint16
+	NtmCellHeight uint16
+	NtmAvgWidth   uint16
+}

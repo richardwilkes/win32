@@ -6,6 +6,7 @@ const (
 	CW_USEDEFAULT           = 0x80000000
 	S_OK                    = 0
 	ERROR_INVALID_PARAMETER = 87
+	LF_FACESIZE = 32
 )
 
 // https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-loadcursora
@@ -706,4 +707,34 @@ const (
 	NULLREGION
 	SIMPLEREGION
 	COMPLEXREGION
+)
+
+// Charset constants
+const (
+	ANSI_CHARSET        = 0
+	DEFAULT_CHARSET     = 1
+	SYMBOL_CHARSET      = 2
+	MAC_CHARSET         = 77
+	SHIFTJIS_CHARSET    = 128
+	HANGEUL_CHARSET     = 129
+	HANGUL_CHARSET      = 129
+	JOHAB_CHARSET       = 130
+	GB2312_CHARSET      = 134
+	CHINESEBIG5_CHARSET = 136
+	GREEK_CHARSET       = 161
+	TURKISH_CHARSET     = 162
+	VIETNAMESE_CHARSET  = 163
+	HEBREW_CHARSET      = 177
+	ARABIC_CHARSET      = 178
+	BALTIC_CHARSET      = 186
+	RUSSIAN_CHARSET     = 204
+	THAI_CHARSET        = 222
+	EASTEUROPE_CHARSET  = 238
+	OEM_CHARSET         = 255
+)
+
+const (
+	RASTER_FONTTYPE = 1 << iota
+	DEVICE_FONTTYPE
+	TRUETYPE_FONTTYPE
 )
