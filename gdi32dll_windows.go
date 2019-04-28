@@ -9,6 +9,9 @@ import (
 
 var (
 	gdi32            = syscall.NewLazyDLL("gdi32.dll")
+	angleArc         = gdi32.NewProc("AngleArc")
+	arc              = gdi32.NewProc("Arc")
+	arcTo            = gdi32.NewProc("ArcTo")
 	beginPath        = gdi32.NewProc("BeginPath")
 	closeFigure      = gdi32.NewProc("CloseFigure")
 	createDCW        = gdi32.NewProc("CreateDCW")
@@ -16,9 +19,34 @@ var (
 	deleteDC         = gdi32.NewProc("DeleteDC")
 	deleteObject     = gdi32.NewProc("DeleteObject")
 	endPath          = gdi32.NewProc("EndPath")
+	fillPath         = gdi32.NewProc("FillPath")
 	gdiFlush         = gdi32.NewProc("GdiFlush")
 	getDeviceCaps    = gdi32.NewProc("GetDeviceCaps")
+	lineTo           = gdi32.NewProc("LineTo")
+	moveToEx         = gdi32.NewProc("MoveToEx")
+	polyBezier       = gdi32.NewProc("PolyBezier")
+	polyBezierTo     = gdi32.NewProc("PolyBezierTo")
+	rectangle        = gdi32.NewProc("Rectangle")
+	setDCBrushColor  = gdi32.NewProc("SetDCBrushColor")
+	setDCPenColor    = gdi32.NewProc("SetDCPenColor")
+	setPolyFillMode  = gdi32.NewProc("SetPolyFillMode")
+	strokePath       = gdi32.NewProc("StrokePath")
 )
+
+// AngleArc https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-anglearc
+func AngleArc(hdc HDC, x, y, r int, startAngle, sweepAngle float32) {
+	angleArc.Call(uintptr(hdc), uintptr(x), uintptr(y), uintptr(r), uintptr(startAngle), uintptr(sweepAngle))
+}
+
+// Arc https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-arc
+func Arc(hdc HDC, x1, y1, x2, y2, x3, y3, x4, y4 int) {
+	arc.Call(uintptr(hdc), uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(x3), uintptr(y3), uintptr(x4), uintptr(y4))
+}
+
+// ArcTo https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-arcto
+func ArcTo(hdc HDC, left, top, right, bottom, xr1, yr1, xr2, yr2 int) {
+	arcTo.Call(uintptr(hdc), uintptr(left), uintptr(top), uintptr(right), uintptr(bottom), uintptr(xr1), uintptr(yr1), uintptr(xr2), uintptr(yr2))
+}
 
 // BeginPath https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-beginpath
 func BeginPath(hdc HDC) {
@@ -70,6 +98,11 @@ func EndPath(hdc HDC) {
 	endPath.Call(uintptr(hdc))
 }
 
+// FillPath https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-fillpath
+func FillPath(hdc HDC) {
+	fillPath.Call(uintptr(hdc))
+}
+
 // GdiFlush https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-gdiflush
 func GdiFlush() bool {
 	ret, _, _ := gdiFlush.Call()
@@ -80,4 +113,52 @@ func GdiFlush() bool {
 func GetDeviceCaps(hdc HDC, index int) int {
 	ret, _, _ := getDeviceCaps.Call(uintptr(hdc), uintptr(index)) //nolint:errcheck
 	return int(ret)
+}
+
+// LineTo https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-lineto
+func LineTo(hdc HDC, x, y int) {
+	lineTo.Call(uintptr(hdc), uintptr(x), uintptr(y))
+}
+
+// MoveToEx https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-movetoex
+func MoveToEx(hdc HDC, x, y int, pt *POINT) {
+	moveToEx.Call(uintptr(hdc), uintptr(x), uintptr(y), uintptr(unsafe.Pointer(pt)))
+}
+
+// PolyBezier https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-polybezier
+func PolyBezier(hdc HDC, pts []POINT) {
+	polyBezier.Call(uintptr(hdc), uintptr(unsafe.Pointer(&pts[0])), uintptr(len(pts)))
+}
+
+// PolyBezierTo https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-polybezierto
+func PolyBezierTo(hdc HDC, pts []POINT) {
+	polyBezierTo.Call(uintptr(hdc), uintptr(unsafe.Pointer(&pts[0])), uintptr(len(pts)))
+}
+
+// Rectangle https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-rectangle
+func Rectangle(hdc HDC, left, top, right, bottom int) {
+	rectangle.Call(uintptr(hdc), uintptr(left), uintptr(top), uintptr(right), uintptr(bottom))
+}
+
+// SetDCBrushColor https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-setdcbrushcolor
+func SetDCBrushColor(hdc HDC, color COLORREF) COLORREF {
+	ret, _, _ := setDCBrushColor.Call(uintptr(hdc), uintptr(color))
+	return COLORREF(ret)
+}
+
+// SetDCPenColor https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-setdcpencolor
+func SetDCPenColor(hdc HDC, color COLORREF) COLORREF {
+	ret, _, _ := setDCPenColor.Call(uintptr(hdc), uintptr(color))
+	return COLORREF(ret)
+}
+
+// SetPolyFillMode https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-setpolyfillmode
+func SetPolyFillMode(hdc HDC, mode int) int {
+	ret, _, _ := setPolyFillMode.Call(uintptr(hdc), uintptr(mode))
+	return int(ret)
+}
+
+// StrokePath https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-strokepath
+func StrokePath(hdc HDC) {
+	strokePath.Call(uintptr(hdc))
 }

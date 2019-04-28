@@ -641,3 +641,9 @@ const (
 	GPTR          = 0x40
 	GHND          = 0x42
 )
+
+// https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-wmf/926ff7dc-197b-427a-8d4e-122f7e3505f1
+const (
+	ALTERNATE = 1 + iota
+	WINDING
+)

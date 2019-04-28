@@ -5,6 +5,7 @@ package win32
 type (
 	ATOM                  uint16
 	BOOL                  int16
+	COLORREF              uint32
 	DWORD                 uint32
 	HACCEL                uintptr
 	HANDLE                uintptr
