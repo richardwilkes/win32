@@ -690,3 +690,20 @@ const (
 	PS_JOIN_MITER = 0x00002000
 	PS_JOIN_MASK  = 0x0000F000
 )
+
+// Region Combine Modes
+const (
+	RGN_AND = 1 + iota
+	RGN_OR
+	RGN_XOR
+	RGN_DIFF
+	RGN_COPY
+)
+
+// Region Types
+const (
+	REGIONERROR = iota
+	NULLREGION
+	SIMPLEREGION
+	COMPLEXREGION
+)

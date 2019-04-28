@@ -23,13 +23,18 @@ var (
 	endPath           = gdi32.NewProc("EndPath")
 	fillPath          = gdi32.NewProc("FillPath")
 	gdiFlush          = gdi32.NewProc("GdiFlush")
+	getClipBox        = gdi32.NewProc("GetClipBox")
 	getDeviceCaps     = gdi32.NewProc("GetDeviceCaps")
 	getWorldTransform = gdi32.NewProc("GetWorldTransform")
+	intersectClipRect = gdi32.NewProc("IntersectClipRect")
 	lineTo            = gdi32.NewProc("LineTo")
 	moveToEx          = gdi32.NewProc("MoveToEx")
 	polyBezier        = gdi32.NewProc("PolyBezier")
 	polyBezierTo      = gdi32.NewProc("PolyBezierTo")
 	rectangle         = gdi32.NewProc("Rectangle")
+	restoreDC         = gdi32.NewProc("RestoreDC")
+	saveDC            = gdi32.NewProc("SaveDC")
+	selectClipPath    = gdi32.NewProc("SelectClipPath")
 	selectObject      = gdi32.NewProc("SelectObject")
 	setDCBrushColor   = gdi32.NewProc("SetDCBrushColor")
 	setDCPenColor     = gdi32.NewProc("SetDCPenColor")
@@ -127,6 +132,12 @@ func GdiFlush() bool {
 	return ret != 0
 }
 
+// GetClipBox https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-getclipbox
+func GetClipBox(hdc HDC, rect *RECT) int {
+	ret, _, _ := getClipBox.Call(uintptr(hdc), uintptr(unsafe.Pointer(rect)))
+	return int(ret)
+}
+
 // GetDeviceCaps https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-getdevicecaps
 func GetDeviceCaps(hdc HDC, index int) int {
 	ret, _, _ := getDeviceCaps.Call(uintptr(hdc), uintptr(index)) //nolint:errcheck
@@ -136,6 +147,12 @@ func GetDeviceCaps(hdc HDC, index int) int {
 // GetWorldTransform https://docs.microsoft.com/en-us/windows/desktop/api/Wingdi/nf-wingdi-getworldtransform
 func GetWorldTransform(hdc HDC, matrix *XFORM) {
 	getWorldTransform.Call(uintptr(hdc), uintptr(unsafe.Pointer(matrix)))
+}
+
+// IntersectClipRect https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-intersectcliprect
+func IntersectClipRect(hdc HDC, left, top, right, bottom int) int {
+	ret, _, _ := intersectClipRect.Call(uintptr(hdc), uintptr(left), uintptr(top), uintptr(right), uintptr(bottom))
+	return int(ret)
 }
 
 // LineTo https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-lineto
@@ -161,6 +178,21 @@ func PolyBezierTo(hdc HDC, pts []POINT) {
 // Rectangle https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-rectangle
 func Rectangle(hdc HDC, left, top, right, bottom int) {
 	rectangle.Call(uintptr(hdc), uintptr(left), uintptr(top), uintptr(right), uintptr(bottom))
+}
+
+// RestoreDC https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-restoredc
+func RestoreDC(hdc HDC, nSavedDC int) {
+	restoreDC.Call(uintptr(hdc), uintptr(nSavedDC))
+}
+
+// SaveDC https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-savedc
+func SaveDC(hdc HDC) {
+	saveDC.Call(uintptr(hdc))
+}
+
+// SelectClipPath https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-selectclippath
+func SelectClipPath(hdc HDC, mode int) {
+	selectClipPath.Call(uintptr(hdc), uintptr(mode))
 }
 
 // SelectObject https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-selectobject
