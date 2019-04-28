@@ -8,29 +8,32 @@ import (
 )
 
 var (
-	gdi32            = syscall.NewLazyDLL("gdi32.dll")
-	angleArc         = gdi32.NewProc("AngleArc")
-	arc              = gdi32.NewProc("Arc")
-	arcTo            = gdi32.NewProc("ArcTo")
-	beginPath        = gdi32.NewProc("BeginPath")
-	closeFigure      = gdi32.NewProc("CloseFigure")
-	createDCW        = gdi32.NewProc("CreateDCW")
-	createDIBSection = gdi32.NewProc("CreateDIBSection")
-	deleteDC         = gdi32.NewProc("DeleteDC")
-	deleteObject     = gdi32.NewProc("DeleteObject")
-	endPath          = gdi32.NewProc("EndPath")
-	fillPath         = gdi32.NewProc("FillPath")
-	gdiFlush         = gdi32.NewProc("GdiFlush")
-	getDeviceCaps    = gdi32.NewProc("GetDeviceCaps")
-	lineTo           = gdi32.NewProc("LineTo")
-	moveToEx         = gdi32.NewProc("MoveToEx")
-	polyBezier       = gdi32.NewProc("PolyBezier")
-	polyBezierTo     = gdi32.NewProc("PolyBezierTo")
-	rectangle        = gdi32.NewProc("Rectangle")
-	setDCBrushColor  = gdi32.NewProc("SetDCBrushColor")
-	setDCPenColor    = gdi32.NewProc("SetDCPenColor")
-	setPolyFillMode  = gdi32.NewProc("SetPolyFillMode")
-	strokePath       = gdi32.NewProc("StrokePath")
+	gdi32             = syscall.NewLazyDLL("gdi32.dll")
+	angleArc          = gdi32.NewProc("AngleArc")
+	arc               = gdi32.NewProc("Arc")
+	arcTo             = gdi32.NewProc("ArcTo")
+	beginPath         = gdi32.NewProc("BeginPath")
+	closeFigure       = gdi32.NewProc("CloseFigure")
+	createDCW         = gdi32.NewProc("CreateDCW")
+	createDIBSection  = gdi32.NewProc("CreateDIBSection")
+	deleteDC          = gdi32.NewProc("DeleteDC")
+	deleteObject      = gdi32.NewProc("DeleteObject")
+	endPath           = gdi32.NewProc("EndPath")
+	fillPath          = gdi32.NewProc("FillPath")
+	gdiFlush          = gdi32.NewProc("GdiFlush")
+	getDeviceCaps     = gdi32.NewProc("GetDeviceCaps")
+	getWorldTransform = gdi32.NewProc("GetWorldTransform")
+	lineTo            = gdi32.NewProc("LineTo")
+	moveToEx          = gdi32.NewProc("MoveToEx")
+	polyBezier        = gdi32.NewProc("PolyBezier")
+	polyBezierTo      = gdi32.NewProc("PolyBezierTo")
+	rectangle         = gdi32.NewProc("Rectangle")
+	setDCBrushColor   = gdi32.NewProc("SetDCBrushColor")
+	setDCPenColor     = gdi32.NewProc("SetDCPenColor")
+	setGraphicsMode   = gdi32.NewProc("SetGraphicsMode")
+	setPolyFillMode   = gdi32.NewProc("SetPolyFillMode")
+	setWorldTransform = gdi32.NewProc("SetWorldTransform")
+	strokePath        = gdi32.NewProc("StrokePath")
 )
 
 // AngleArc https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-anglearc
@@ -115,6 +118,11 @@ func GetDeviceCaps(hdc HDC, index int) int {
 	return int(ret)
 }
 
+// GetWorldTransform https://docs.microsoft.com/en-us/windows/desktop/api/Wingdi/nf-wingdi-getworldtransform
+func GetWorldTransform(hdc HDC, matrix *XFORM) {
+	getWorldTransform.Call(uintptr(hdc), uintptr(unsafe.Pointer(matrix)))
+}
+
 // LineTo https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-lineto
 func LineTo(hdc HDC, x, y int) {
 	lineTo.Call(uintptr(hdc), uintptr(x), uintptr(y))
@@ -152,10 +160,21 @@ func SetDCPenColor(hdc HDC, color COLORREF) COLORREF {
 	return COLORREF(ret)
 }
 
+// SetGraphicsMode https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-setgraphicsmode
+func SetGraphicsMode(hdc HDC, mode int) int {
+	ret, _, _ := setGraphicsMode.Call(uintptr(hdc), uintptr(mode))
+	return int(ret)
+}
+
 // SetPolyFillMode https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-setpolyfillmode
 func SetPolyFillMode(hdc HDC, mode int) int {
 	ret, _, _ := setPolyFillMode.Call(uintptr(hdc), uintptr(mode))
 	return int(ret)
+}
+
+// SetWorldTransform https://docs.microsoft.com/en-us/windows/desktop/api/Wingdi/nf-wingdi-setworldtransform
+func SetWorldTransform(hdc HDC, matrix *XFORM) {
+	setWorldTransform.Call(uintptr(hdc), uintptr(unsafe.Pointer(matrix)))
 }
 
 // StrokePath https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-strokepath

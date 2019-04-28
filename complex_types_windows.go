@@ -191,3 +191,13 @@ type PAINTSTRUCT struct {
 	FIncUpdate  BOOL
 	RgbReserved [32]byte
 }
+
+// XFORM https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/ns-wingdi-tagxform
+type XFORM struct {
+	EM11 float32
+	EM12 float32
+	EM21 float32
+	EM22 float32
+	EDx  float32
+	EDy  float32
+}

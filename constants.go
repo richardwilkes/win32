@@ -647,3 +647,9 @@ const (
 	ALTERNATE = 1 + iota
 	WINDING
 )
+
+// Graphics modes
+const (
+	GM_COMPATIBLE = 1 + iota
+	GM_ADVANCED
+)
