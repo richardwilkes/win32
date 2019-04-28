@@ -16,6 +16,8 @@ var (
 	closeFigure       = gdi32.NewProc("CloseFigure")
 	createDCW         = gdi32.NewProc("CreateDCW")
 	createDIBSection  = gdi32.NewProc("CreateDIBSection")
+	createPen         = gdi32.NewProc("CreatePen")
+	createSolidBrush  = gdi32.NewProc("CreateSolidBrush")
 	deleteDC          = gdi32.NewProc("DeleteDC")
 	deleteObject      = gdi32.NewProc("DeleteObject")
 	endPath           = gdi32.NewProc("EndPath")
@@ -28,6 +30,7 @@ var (
 	polyBezier        = gdi32.NewProc("PolyBezier")
 	polyBezierTo      = gdi32.NewProc("PolyBezierTo")
 	rectangle         = gdi32.NewProc("Rectangle")
+	selectObject      = gdi32.NewProc("SelectObject")
 	setDCBrushColor   = gdi32.NewProc("SetDCBrushColor")
 	setDCPenColor     = gdi32.NewProc("SetDCPenColor")
 	setGraphicsMode   = gdi32.NewProc("SetGraphicsMode")
@@ -82,6 +85,18 @@ func CreateDIBSection(hdc HDC, pbmi *BITMAPINFOHEADER, usage uint32, ppvBits *un
 		return 0, errs.New("unable to create DIB section")
 	}
 	return HBITMAP(ret), nil
+}
+
+// CreateSolidBrush https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-createsolidbrush
+func CreateSolidBrush(color COLORREF) HBRUSH {
+	ret, _, _ := createSolidBrush.Call(uintptr(color))
+	return HBRUSH(ret)
+}
+
+// CreatePen https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-createpen
+func CreatePen(style, width int, color COLORREF) HPEN {
+	ret, _, _ := createPen.Call(uintptr(style), uintptr(width), uintptr(color))
+	return HPEN(ret)
 }
 
 // DeleteDC https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-deletedc
@@ -146,6 +161,12 @@ func PolyBezierTo(hdc HDC, pts []POINT) {
 // Rectangle https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-rectangle
 func Rectangle(hdc HDC, left, top, right, bottom int) {
 	rectangle.Call(uintptr(hdc), uintptr(left), uintptr(top), uintptr(right), uintptr(bottom))
+}
+
+// SelectObject https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-selectobject
+func SelectObject(hdc HDC, obj HGDIOBJ) HGDIOBJ {
+	ret, _, _ := selectObject.Call(uintptr(hdc), uintptr(obj))
+	return HGDIOBJ(ret)
 }
 
 // SetDCBrushColor https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-setdcbrushcolor

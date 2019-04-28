@@ -6,16 +6,19 @@ type (
 	ATOM                  uint16
 	BOOL                  int16
 	COLORREF              uint32
+	DPI_AWARENESS_CONTEXT uint32
 	DWORD                 uint32
 	HACCEL                uintptr
 	HANDLE                uintptr
 	HBITMAP               uintptr
+	HBRUSH                uintptr
 	HCURSOR               uintptr
 	HDC                   uintptr
 	HGDIOBJ               uintptr
 	HGLOBAL               uintptr
-	HMENU                 uintptr
 	HINSTANCE             uintptr
+	HMENU                 uintptr
+	HPEN                  uintptr
 	HMONITOR              uintptr
 	HWND                  uintptr
 	LPACCEL               uintptr
@@ -25,5 +28,4 @@ type (
 	LPARAM                uintptr
 	WORD                  uint16
 	WPARAM                uintptr
-	DPI_AWARENESS_CONTEXT uint32
 )
