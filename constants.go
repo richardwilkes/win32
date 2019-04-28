@@ -800,6 +800,7 @@ const (
 	TMPF_DEVICE
 )
 
+// Text positioning
 const (
 	TA_TOP        = 0
 	TA_LEFT       = 0
@@ -810,4 +811,10 @@ const (
 	TA_BOTTOM     = 8
 	TA_BASELINE   = 24
 	TA_MASK       = TA_BASELINE + TA_CENTER + TA_UPDATECP
+)
+
+// Arc directions
+const (
+	AD_COUNTERCLOCKWISE = 1 + iota
+	AD_CLOCKWISE
 )

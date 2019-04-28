@@ -24,6 +24,7 @@ var (
 	fillPath              = gdi32.NewProc("FillPath")
 	gdiFlush              = gdi32.NewProc("GdiFlush")
 	getClipBox            = gdi32.NewProc("GetClipBox")
+	getCurrentPositionEx  = gdi32.NewProc("GetCurrentPositionEx")
 	getDeviceCaps         = gdi32.NewProc("GetDeviceCaps")
 	getTextExtentPoint32W = gdi32.NewProc("GetTextExtentPoint32W")
 	getTextMetricsW       = gdi32.NewProc("GetTextMetricsW")
@@ -38,6 +39,7 @@ var (
 	saveDC                = gdi32.NewProc("SaveDC")
 	selectClipPath        = gdi32.NewProc("SelectClipPath")
 	selectObject          = gdi32.NewProc("SelectObject")
+	setArcDirection       = gdi32.NewProc("SetArcDirection")
 	setDCBrushColor       = gdi32.NewProc("SetDCBrushColor")
 	setDCPenColor         = gdi32.NewProc("SetDCPenColor")
 	setGraphicsMode       = gdi32.NewProc("SetGraphicsMode")
@@ -156,6 +158,11 @@ func GetClipBox(hdc HDC, rect *RECT) int {
 	return int(ret)
 }
 
+// GetCurrentPositionEx https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-getcurrentpositionex
+func GetCurrentPositionEx(hdc HDC, where *POINT) {
+	getCurrentPositionEx.Call(uintptr(hdc), uintptr(unsafe.Pointer(where)))
+}
+
 // GetDeviceCaps https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-getdevicecaps
 func GetDeviceCaps(hdc HDC, index int) int {
 	ret, _, _ := getDeviceCaps.Call(uintptr(hdc), uintptr(index)) //nolint:errcheck
@@ -229,6 +236,11 @@ func SelectClipPath(hdc HDC, mode int) {
 func SelectObject(hdc HDC, obj HGDIOBJ) HGDIOBJ {
 	ret, _, _ := selectObject.Call(uintptr(hdc), uintptr(obj))
 	return HGDIOBJ(ret)
+}
+
+// SetArcDirection https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-setarcdirection
+func SetArcDirection(hdc HDC, dir int) {
+	setArcDirection.Call(uintptr(hdc), uintptr(dir))
 }
 
 // SetDCBrushColor https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-setdcbrushcolor
