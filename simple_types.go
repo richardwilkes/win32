@@ -14,6 +14,7 @@ type (
 	HBRUSH                uintptr
 	HCURSOR               uintptr
 	HDC                   uintptr
+	HFONT                 uintptr
 	HGDIOBJ               uintptr
 	HGLOBAL               uintptr
 	HINSTANCE             uintptr

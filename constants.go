@@ -6,7 +6,7 @@ const (
 	CW_USEDEFAULT           = 0x80000000
 	S_OK                    = 0
 	ERROR_INVALID_PARAMETER = 87
-	LF_FACESIZE = 32
+	LF_FACESIZE             = 32
 )
 
 // https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-loadcursora
@@ -733,8 +733,81 @@ const (
 	OEM_CHARSET         = 255
 )
 
+// Font types
 const (
 	RASTER_FONTTYPE = 1 << iota
 	DEVICE_FONTTYPE
 	TRUETYPE_FONTTYPE
+)
+
+// Font output precision constants
+const (
+	OUT_DEFAULT_PRECIS = iota
+	OUT_STRING_PRECIS
+	OUT_CHARACTER_PRECIS
+	OUT_STROKE_PRECIS
+	OUT_TT_PRECIS
+	OUT_DEVICE_PRECIS
+	OUT_RASTER_PRECIS
+	OUT_TT_ONLY_PRECIS
+	OUT_OUTLINE_PRECIS
+	OUT_PS_ONLY_PRECIS = 10
+)
+
+// Font clipping precision constants
+const (
+	CLIP_DEFAULT_PRECIS   = 0
+	CLIP_CHARACTER_PRECIS = 1
+	CLIP_STROKE_PRECIS    = 2
+	CLIP_MASK             = 15
+	CLIP_LH_ANGLES        = 16
+	CLIP_TT_ALWAYS        = 32
+	CLIP_EMBEDDED         = 128
+)
+
+// Font output quality constants
+const (
+	DEFAULT_QUALITY = iota
+	DRAFT_QUALITY
+	PROOF_QUALITY
+	NONANTIALIASED_QUALITY
+	ANTIALIASED_QUALITY
+	CLEARTYPE_QUALITY
+)
+
+// Font pitch constants
+const (
+	DEFAULT_PITCH = iota
+	FIXED_PITCH
+	VARIABLE_PITCH
+)
+
+// Font family constants
+const (
+	FF_DONTCARE   = 0
+	FF_ROMAN      = 16
+	FF_SWISS      = 32
+	FF_MODERN     = 48
+	FF_SCRIPT     = 64
+	FF_DECORATIVE = 80
+)
+
+// Font pitch and family flags
+const (
+	TMPF_FIXED_PITCH = 1 << iota
+	TMPF_VECTOR
+	TMPF_TRUETYPE
+	TMPF_DEVICE
+)
+
+const (
+	TA_TOP        = 0
+	TA_LEFT       = 0
+	TA_NOUPDATECP = 0
+	TA_UPDATECP   = 1
+	TA_RIGHT      = 2
+	TA_CENTER     = 6
+	TA_BOTTOM     = 8
+	TA_BASELINE   = 24
+	TA_MASK       = TA_BASELINE + TA_CENTER + TA_UPDATECP
 )

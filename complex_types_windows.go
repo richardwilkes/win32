@@ -10,10 +10,16 @@ type RECT struct {
 	Bottom int32
 }
 
-// POINT https://docs.microsoft.com/en-us/previous-versions//dd162805(v=vs.85)
+// POINT https://docs.microsoft.com/en-us/previous-versions/dd162805(v=vs.85)
 type POINT struct {
 	X int32
 	Y int32
+}
+
+// SIZE https://docs.microsoft.com/en-us/previous-versions/dd145106(v=vs.85)
+type SIZE struct {
+	CX int32
+	CY int32
 }
 
 // MSG https://docs.microsoft.com/en-us/windows/desktop/api/winuser/ns-winuser-tagmsg

@@ -3,46 +3,49 @@ package win32
 import (
 	"syscall"
 	"unsafe"
-
-	"github.com/richardwilkes/toolbox/errs"
 )
 
 var (
-	gdi32               = syscall.NewLazyDLL("gdi32.dll")
-	angleArc            = gdi32.NewProc("AngleArc")
-	arc                 = gdi32.NewProc("Arc")
-	arcTo               = gdi32.NewProc("ArcTo")
-	beginPath           = gdi32.NewProc("BeginPath")
-	closeFigure         = gdi32.NewProc("CloseFigure")
-	createDCW           = gdi32.NewProc("CreateDCW")
-	createDIBSection    = gdi32.NewProc("CreateDIBSection")
-	createPen           = gdi32.NewProc("CreatePen")
-	createSolidBrush    = gdi32.NewProc("CreateSolidBrush")
-	deleteDC            = gdi32.NewProc("DeleteDC")
-	deleteObject        = gdi32.NewProc("DeleteObject")
-	endPath             = gdi32.NewProc("EndPath")
-	enumFontFamiliesExW = gdi32.NewProc("EnumFontFamiliesExW")
-	fillPath            = gdi32.NewProc("FillPath")
-	gdiFlush            = gdi32.NewProc("GdiFlush")
-	getClipBox          = gdi32.NewProc("GetClipBox")
-	getDeviceCaps       = gdi32.NewProc("GetDeviceCaps")
-	getWorldTransform   = gdi32.NewProc("GetWorldTransform")
-	intersectClipRect   = gdi32.NewProc("IntersectClipRect")
-	lineTo              = gdi32.NewProc("LineTo")
-	moveToEx            = gdi32.NewProc("MoveToEx")
-	polyBezier          = gdi32.NewProc("PolyBezier")
-	polyBezierTo        = gdi32.NewProc("PolyBezierTo")
-	rectangle           = gdi32.NewProc("Rectangle")
-	restoreDC           = gdi32.NewProc("RestoreDC")
-	saveDC              = gdi32.NewProc("SaveDC")
-	selectClipPath      = gdi32.NewProc("SelectClipPath")
-	selectObject        = gdi32.NewProc("SelectObject")
-	setDCBrushColor     = gdi32.NewProc("SetDCBrushColor")
-	setDCPenColor       = gdi32.NewProc("SetDCPenColor")
-	setGraphicsMode     = gdi32.NewProc("SetGraphicsMode")
-	setPolyFillMode     = gdi32.NewProc("SetPolyFillMode")
-	setWorldTransform   = gdi32.NewProc("SetWorldTransform")
-	strokePath          = gdi32.NewProc("StrokePath")
+	gdi32                 = syscall.NewLazyDLL("gdi32.dll")
+	angleArc              = gdi32.NewProc("AngleArc")
+	arc                   = gdi32.NewProc("Arc")
+	arcTo                 = gdi32.NewProc("ArcTo")
+	beginPath             = gdi32.NewProc("BeginPath")
+	closeFigure           = gdi32.NewProc("CloseFigure")
+	createDCW             = gdi32.NewProc("CreateDCW")
+	createDIBSection      = gdi32.NewProc("CreateDIBSection")
+	createFontW           = gdi32.NewProc("CreateFontW")
+	createPen             = gdi32.NewProc("CreatePen")
+	createSolidBrush      = gdi32.NewProc("CreateSolidBrush")
+	deleteDC              = gdi32.NewProc("DeleteDC")
+	deleteObject          = gdi32.NewProc("DeleteObject")
+	endPath               = gdi32.NewProc("EndPath")
+	enumFontFamiliesExW   = gdi32.NewProc("EnumFontFamiliesExW")
+	fillPath              = gdi32.NewProc("FillPath")
+	gdiFlush              = gdi32.NewProc("GdiFlush")
+	getClipBox            = gdi32.NewProc("GetClipBox")
+	getDeviceCaps         = gdi32.NewProc("GetDeviceCaps")
+	getTextExtentPoint32W = gdi32.NewProc("GetTextExtentPoint32W")
+	getTextMetricsW       = gdi32.NewProc("GetTextMetricsW")
+	getWorldTransform     = gdi32.NewProc("GetWorldTransform")
+	intersectClipRect     = gdi32.NewProc("IntersectClipRect")
+	lineTo                = gdi32.NewProc("LineTo")
+	moveToEx              = gdi32.NewProc("MoveToEx")
+	polyBezier            = gdi32.NewProc("PolyBezier")
+	polyBezierTo          = gdi32.NewProc("PolyBezierTo")
+	rectangle             = gdi32.NewProc("Rectangle")
+	restoreDC             = gdi32.NewProc("RestoreDC")
+	saveDC                = gdi32.NewProc("SaveDC")
+	selectClipPath        = gdi32.NewProc("SelectClipPath")
+	selectObject          = gdi32.NewProc("SelectObject")
+	setDCBrushColor       = gdi32.NewProc("SetDCBrushColor")
+	setDCPenColor         = gdi32.NewProc("SetDCPenColor")
+	setGraphicsMode       = gdi32.NewProc("SetGraphicsMode")
+	setPolyFillMode       = gdi32.NewProc("SetPolyFillMode")
+	setTextAlign          = gdi32.NewProc("SetTextAlign")
+	setWorldTransform     = gdi32.NewProc("SetWorldTransform")
+	strokePath            = gdi32.NewProc("StrokePath")
+	textOutW              = gdi32.NewProc("TextOutW")
 )
 
 // AngleArc https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-anglearc
@@ -82,15 +85,22 @@ func CreateDC(driver, device, port LPCWSTR, pdm *DEVMODE) HDC {
 }
 
 // CreateDIBSection https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-createdibsection
-func CreateDIBSection(hdc HDC, pbmi *BITMAPINFOHEADER, usage uint32, ppvBits *unsafe.Pointer, hSection HANDLE, offset uint32) (HBITMAP, error) {
+func CreateDIBSection(hdc HDC, pbmi *BITMAPINFOHEADER, usage uint32, ppvBits *unsafe.Pointer, hSection HANDLE, offset uint32) HBITMAP {
 	ret, _, _ := createDIBSection.Call(uintptr(hdc), uintptr(unsafe.Pointer(pbmi)), uintptr(usage), uintptr(unsafe.Pointer(ppvBits)), uintptr(hSection), uintptr(offset))
 	if ret == ERROR_INVALID_PARAMETER {
-		return 0, errs.New("invalid parameter")
+		ret = 0
 	}
-	if ret == 0 {
-		return 0, errs.New("unable to create DIB section")
+	return HBITMAP(ret)
+}
+
+// CreateFont https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-createfontw
+func CreateFont(height, width, escapement, orientation, weight, italic, underline, strikeOut, charSet, outPrecision, clipPrecision, quality, pitchAndFamily int, faceName string) HFONT {
+	str, err := syscall.UTF16FromString(string(faceName))
+	if err != nil {
+		return 0
 	}
-	return HBITMAP(ret), nil
+	ret, _, _ := createFontW.Call(uintptr(height), uintptr(width), uintptr(escapement), uintptr(orientation), uintptr(weight), uintptr(italic), uintptr(underline), uintptr(strikeOut), uintptr(charSet), uintptr(outPrecision), uintptr(clipPrecision), uintptr(quality), uintptr(pitchAndFamily), uintptr(unsafe.Pointer(&str[0])))
+	return HFONT(ret)
 }
 
 // CreateSolidBrush https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-createsolidbrush
@@ -151,6 +161,18 @@ func GetClipBox(hdc HDC, rect *RECT) int {
 func GetDeviceCaps(hdc HDC, index int) int {
 	ret, _, _ := getDeviceCaps.Call(uintptr(hdc), uintptr(index)) //nolint:errcheck
 	return int(ret)
+}
+
+// GetTextExtentPoint https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-gettextextentpoint32w
+func GetTextExtentPoint(hdc HDC, text string, size *SIZE) {
+	if str, err := syscall.UTF16FromString(string(text)); err != nil {
+		getTextExtentPoint32W.Call(uintptr(hdc), uintptr(unsafe.Pointer(&str[0])), uintptr(len(str)), uintptr(unsafe.Pointer(&size)))
+	}
+}
+
+// GetTextMetrics https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-gettextmetricsw
+func GetTextMetrics(hdc HDC, tm *NEWTEXTMETRIC) {
+	getTextMetricsW.Call(uintptr(hdc), uintptr(unsafe.Pointer(tm)))
 }
 
 // GetWorldTransform https://docs.microsoft.com/en-us/windows/desktop/api/Wingdi/nf-wingdi-getworldtransform
@@ -234,6 +256,11 @@ func SetPolyFillMode(hdc HDC, mode int) int {
 	return int(ret)
 }
 
+// SetTextAlign https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-settextalign
+func SetTextAlign(hdc HDC, align int) {
+	setTextAlign.Call(uintptr(hdc), uintptr(align))
+}
+
 // SetWorldTransform https://docs.microsoft.com/en-us/windows/desktop/api/Wingdi/nf-wingdi-setworldtransform
 func SetWorldTransform(hdc HDC, matrix *XFORM) {
 	setWorldTransform.Call(uintptr(hdc), uintptr(unsafe.Pointer(matrix)))
@@ -242,4 +269,11 @@ func SetWorldTransform(hdc HDC, matrix *XFORM) {
 // StrokePath https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-strokepath
 func StrokePath(hdc HDC) {
 	strokePath.Call(uintptr(hdc))
+}
+
+// TextOut https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-textoutw
+func TextOut(hdc HDC, x, y int, text string) {
+	if str, err := syscall.UTF16FromString(string(text)); err != nil {
+		textOutW.Call(uintptr(hdc), uintptr(x), uintptr(y), uintptr(unsafe.Pointer(&str[0])), uintptr(len(str)))
+	}
 }
