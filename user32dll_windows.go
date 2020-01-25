@@ -73,6 +73,7 @@ var (
 	setWindowTextW                = user32.NewProc("SetWindowTextW")
 	showWindow                    = user32.NewProc("ShowWindow")
 	translateMessage              = user32.NewProc("TranslateMessage")
+	validateRect                  = user32.NewProc("ValidateRect")
 )
 
 // AdjustWindowRectEx https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-adjustwindowrectex
@@ -509,4 +510,9 @@ func ShowWindow(hwnd HWND, cmd int32) bool {
 // TranslateMessage https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-translatemessage
 func TranslateMessage(msg *MSG) {
 	translateMessage.Call(uintptr(unsafe.Pointer(msg)))
+}
+
+// ValidateRect https://docs.microsoft.com/en-us/windows/desktop/api/Winuser/nf-winuser-validaterect
+func ValidateRect(hwnd HWND, rect *RECT) {
+	validateRect.Call(uintptr(hwnd), uintptr(unsafe.Pointer(rect)))
 }
