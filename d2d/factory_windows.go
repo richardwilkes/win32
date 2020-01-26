@@ -67,27 +67,27 @@ func (f *Factory) DesktopDPI() (dpiX, dpiY float32) {
 }
 
 // CreateRectangleGeometry https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1factory-createrectanglegeometry%28constd2d1_rect_f_id2d1rectanglegeometry%29
-func (f *Factory) CreateRectangleGeometry(rectangle *Rect) *RectangleGeometry {
+func (f *Factory) CreateRectangleGeometry(rectangle Rect) *RectangleGeometry {
 	var rectangleGeometry *RectangleGeometry
-	if ret, _, _ := syscall.Syscall(f.vmt().CreateRectangleGeometry, 3, uintptr(unsafe.Pointer(f)), uintptr(unsafe.Pointer(rectangle)), uintptr(unsafe.Pointer(&rectangleGeometry))); ret != win32.S_OK {
+	if ret, _, _ := syscall.Syscall(f.vmt().CreateRectangleGeometry, 3, uintptr(unsafe.Pointer(f)), uintptr(unsafe.Pointer(&rectangle)), uintptr(unsafe.Pointer(&rectangleGeometry))); ret != win32.S_OK {
 		return nil
 	}
 	return rectangleGeometry
 }
 
 // CreateRoundedRectangleGeometry https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1factory-createroundedrectanglegeometry(constd2d1_rounded_rect__id2d1roundedrectanglegeometry)
-func (f *Factory) CreateRoundedRectangleGeometry(roundedRectangle *RoundedRect) *RoundedRectangleGeometry {
+func (f *Factory) CreateRoundedRectangleGeometry(roundedRectangle RoundedRect) *RoundedRectangleGeometry {
 	var roundedRectangleGeometry *RoundedRectangleGeometry
-	if ret, _, _ := syscall.Syscall(f.vmt().CreateRoundedRectangleGeometry, 3, uintptr(unsafe.Pointer(f)), uintptr(unsafe.Pointer(roundedRectangle)), uintptr(unsafe.Pointer(&roundedRectangleGeometry))); ret != win32.S_OK {
+	if ret, _, _ := syscall.Syscall(f.vmt().CreateRoundedRectangleGeometry, 3, uintptr(unsafe.Pointer(f)), uintptr(unsafe.Pointer(&roundedRectangle)), uintptr(unsafe.Pointer(&roundedRectangleGeometry))); ret != win32.S_OK {
 		return nil
 	}
 	return roundedRectangleGeometry
 }
 
 // CreateEllipseGeometry https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1factory-createellipsegeometry(constd2d1_ellipse_id2d1ellipsegeometry)
-func (f *Factory) CreateEllipseGeometry(ellipse *Ellipse) *EllipseGeometry {
+func (f *Factory) CreateEllipseGeometry(ellipse Ellipse) *EllipseGeometry {
 	var ellipseGeometry *EllipseGeometry
-	if ret, _, _ := syscall.Syscall(f.vmt().CreateEllipseGeometry, 3, uintptr(unsafe.Pointer(f)), uintptr(unsafe.Pointer(ellipse)), uintptr(unsafe.Pointer(&ellipseGeometry))); ret != win32.S_OK {
+	if ret, _, _ := syscall.Syscall(f.vmt().CreateEllipseGeometry, 3, uintptr(unsafe.Pointer(f)), uintptr(unsafe.Pointer(&ellipse)), uintptr(unsafe.Pointer(&ellipseGeometry))); ret != win32.S_OK {
 		return nil
 	}
 	return ellipseGeometry
