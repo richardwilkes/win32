@@ -352,8 +352,10 @@ func (obj *RenderTarget) Flush() (tag1, tag2 Tag) {
 }
 
 // SaveDrawingState https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1rendertarget-savedrawingstate
-func (obj *RenderTarget) SaveDrawingState(drawingStateBlock *DrawingStateBlock) {
-	syscall.Syscall(obj.vmt().SaveDrawingState, 2, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(drawingStateBlock)), 0)
+func (obj *RenderTarget) SaveDrawingState() *DrawingStateBlock {
+	var drawingStateBlock DrawingStateBlock
+	syscall.Syscall(obj.vmt().SaveDrawingState, 2, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(&drawingStateBlock)), 0)
+	return &drawingStateBlock
 }
 
 // RestoreDrawingState https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1rendertarget-restoredrawingstate
