@@ -1,7 +1,6 @@
 package d2d
 
 import (
-	"fmt"
 	"syscall"
 	"unsafe"
 
@@ -31,20 +30,17 @@ func (obj *PathGeometry) vmt() *vmtPathGeometry {
 
 // Open https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1pathgeometry-open
 // May only be called once.
-func (obj *PathGeometry) Open() (*GeometrySink, error) {
+func (obj *PathGeometry) Open() *GeometrySink {
 	var geometrySink *GeometrySink
 	if ret, _, _ := syscall.Syscall(obj.vmt().Open, 2, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(&geometrySink)), 0); ret != win32.S_OK {
-		return nil, fmt.Errorf("call to Open failed: %#x", ret)
+		return nil
 	}
-	return geometrySink, nil
+	return geometrySink
 }
 
 // Stream https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1pathgeometry-stream
-func (obj *PathGeometry) Stream(geometrySink *GeometrySink) error {
-	if ret, _, _ := syscall.Syscall(obj.vmt().Stream, 2, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(geometrySink)), 0); ret != win32.S_OK {
-		return fmt.Errorf("call to Stream failed: %#x", ret)
-	}
-	return nil
+func (obj *PathGeometry) Stream(geometrySink *GeometrySink) {
+	syscall.Syscall(obj.vmt().Stream, 2, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(geometrySink)), 0)
 }
 
 // SegmentCount https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1pathgeometry-getsegmentcount

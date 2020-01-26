@@ -115,10 +115,8 @@ func (obj *Geometry) ComputeLength(worldTransform *Matrix3x2, flatteningToleranc
 }
 
 // ComputePointAtLength https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1geometry-computepointatlength%28float_constd2d1_matrix_3x2_f_float_d2d1_point_2f_d2d1_point_2f%29
-func (obj *Geometry) ComputePointAtLength(length float32, worldTransform *Matrix3x2, flatteningTolerance float32) (point Point, unitTangentVector Point, err error) {
-	if ret, _, _ := syscall.Syscall6(obj.vmt().ComputePointAtLength, 6, uintptr(unsafe.Pointer(obj)), uintptr(*(*uint32)(unsafe.Pointer(&length))), uintptr(unsafe.Pointer(worldTransform)), uintptr(*(*uint32)(unsafe.Pointer(&flatteningTolerance))), uintptr(unsafe.Pointer(&point)), uintptr(unsafe.Pointer(&unitTangentVector))); ret != win32.S_OK {
-		err = fmt.Errorf("call to ComputePointAtLength failed: %#x", ret)
-	}
+func (obj *Geometry) ComputePointAtLength(length float32, worldTransform *Matrix3x2, flatteningTolerance float32) (point, unitTangentVector Point) {
+	syscall.Syscall6(obj.vmt().ComputePointAtLength, 6, uintptr(unsafe.Pointer(obj)), uintptr(*(*uint32)(unsafe.Pointer(&length))), uintptr(unsafe.Pointer(worldTransform)), uintptr(*(*uint32)(unsafe.Pointer(&flatteningTolerance))), uintptr(unsafe.Pointer(&point)), uintptr(unsafe.Pointer(&unitTangentVector)))
 	return
 }
 

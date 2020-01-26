@@ -27,8 +27,8 @@ func (obj *DCRenderTarget) vmt() *vmtDCRenderTarget {
 }
 
 // BindDC https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1dcrendertarget-binddc
-func (obj *DCRenderTarget) BindDC(hDC win32.HDC, pSubRect *win32.RECT) error {
-	if ret, _, _ := syscall.Syscall(obj.vmt().BindDC, 3, uintptr(unsafe.Pointer(obj)), uintptr(hDC), uintptr(unsafe.Pointer(pSubRect))); ret != win32.S_OK {
+func (obj *DCRenderTarget) BindDC(hDC win32.HDC, rect win32.RECT) error {
+	if ret, _, _ := syscall.Syscall(obj.vmt().BindDC, 3, uintptr(unsafe.Pointer(obj)), uintptr(hDC), uintptr(unsafe.Pointer(&rect))); ret != win32.S_OK {
 		return fmt.Errorf("call to BindDC failed: %#x", ret)
 	}
 	return nil

@@ -34,13 +34,13 @@ func (obj *GeometrySink) AddLine(point Point) {
 }
 
 // AddBezier https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1geometrysink-addbezier%28constd2d1_bezier_segment%29
-func (obj *GeometrySink) AddBezier(bezier *BezierSegment) {
-	syscall.Syscall(obj.vmt().AddBezier, 2, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(bezier)), 0)
+func (obj *GeometrySink) AddBezier(bezier BezierSegment) {
+	syscall.Syscall(obj.vmt().AddBezier, 2, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(&bezier)), 0)
 }
 
 // AddQuadraticBezier https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1geometrysink-addquadraticbezier%28constd2d1_quadratic_bezier_segment%29
-func (obj *GeometrySink) AddQuadraticBezier(bezier *QuadraticBezierSegment) {
-	syscall.Syscall(obj.vmt().AddQuadraticBezier, 2, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(bezier)), 0)
+func (obj *GeometrySink) AddQuadraticBezier(bezier QuadraticBezierSegment) {
+	syscall.Syscall(obj.vmt().AddQuadraticBezier, 2, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(&bezier)), 0)
 }
 
 // AddQuadraticBeziers https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1geometrysink-addquadraticbeziers
@@ -49,6 +49,6 @@ func (obj *GeometrySink) AddQuadraticBeziers(beziers []QuadraticBezierSegment) {
 }
 
 // AddArc https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1geometrysink-addarc%28constd2d1_arc_segment%29
-func (obj *GeometrySink) AddArc(arc *ArcSegment) {
-	syscall.Syscall(obj.vmt().AddArc, 2, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(arc)), 0)
+func (obj *GeometrySink) AddArc(arc ArcSegment) {
+	syscall.Syscall(obj.vmt().AddArc, 2, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(&arc)), 0)
 }

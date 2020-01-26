@@ -114,9 +114,9 @@ func (obj *RenderTarget) CreateBitmapBrush(bitmap *Bitmap, bitmapBrushProperties
 }
 
 // CreateSolidColorBrush https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1rendertarget-createsolidcolorbrush%28constd2d1_color_f_constd2d1_brush_properties_id2d1solidcolorbrush%29
-func (obj *RenderTarget) CreateSolidColorBrush(color *Color, brushProperties *BrushProperties) *SolidColorBrush {
+func (obj *RenderTarget) CreateSolidColorBrush(color Color, brushProperties *BrushProperties) *SolidColorBrush {
 	var solidColorBrush *SolidColorBrush
-	if ret, _, _ := syscall.Syscall6(obj.vmt().CreateSolidColorBrush, 4, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(color)), uintptr(unsafe.Pointer(brushProperties)), uintptr(unsafe.Pointer(&solidColorBrush)), 0, 0); ret != win32.S_OK {
+	if ret, _, _ := syscall.Syscall6(obj.vmt().CreateSolidColorBrush, 4, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(&color)), uintptr(unsafe.Pointer(brushProperties)), uintptr(unsafe.Pointer(&solidColorBrush)), 0, 0); ret != win32.S_OK {
 		return nil
 	}
 	return solidColorBrush
@@ -153,23 +153,23 @@ func (obj *RenderTarget) CreateRadialGradientBrush(radialGradientBrushProperties
 	return radialGradientBrush
 }
 
-// CreateCompatibleRenderTarget https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1rendertarget-createcompatiblerendertarget%28id2d1bitmaprendertarget%29
+// CreateCompatibleRenderTarget https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1rendertarget-createcompatiblerendertarget(d2d1_size_f_d2d1_size_u_d2d1_pixel_format_id2d1bitmaprendertarget)
 func (obj *RenderTarget) CreateCompatibleRenderTarget(desiredSize *Size, desiredPixelSize *SizeU, desiredFormat *PixelFormat, GDICompatible bool) *BitmapRenderTarget {
 	var bitmapRenderTarget *BitmapRenderTarget
 	var options uint32
 	if GDICompatible {
 		options = 1
 	}
-	if ret, _, _ := syscall.Syscall6(obj.vmt().CreateCompatibleRenderTarget, 6, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(desiredSize)), uintptr(unsafe.Pointer(desiredPixelSize)), uintptr(unsafe.Pointer(desiredFormat)), uintptr(options), uintptr(unsafe.Pointer(&bitmapRenderTarget))); ret != win32.S_OK {
+	if ret, _, _ := syscall.Syscall6(obj.vmt().CreateCompatibleRenderTarget, 6, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(&desiredSize)), uintptr(unsafe.Pointer(desiredPixelSize)), uintptr(unsafe.Pointer(desiredFormat)), uintptr(options), uintptr(unsafe.Pointer(&bitmapRenderTarget))); ret != win32.S_OK {
 		return nil
 	}
 	return bitmapRenderTarget
 }
 
-// CreateLayer https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1rendertarget-createlayer%28constd2d1_size_f_id2d1layer%29
-func (obj *RenderTarget) CreateLayer(size *Size) *Layer {
+// CreateLayer https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1rendertarget-createlayer(d2d1_size_f_id2d1layer)
+func (obj *RenderTarget) CreateLayer(size Size) *Layer {
 	var layer *Layer
-	if ret, _, _ := syscall.Syscall(obj.vmt().CreateLayer, 3, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(size)), uintptr(unsafe.Pointer(&layer))); ret != win32.S_OK {
+	if ret, _, _ := syscall.Syscall(obj.vmt().CreateLayer, 3, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(&size)), uintptr(unsafe.Pointer(&layer))); ret != win32.S_OK {
 		return nil
 	}
 	return layer
@@ -190,33 +190,33 @@ func (obj *RenderTarget) DrawLine(p0 Point, p1 Point, brush *Brush, strokeWidth 
 }
 
 // DrawRectangle https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1rendertarget-drawrectangle%28constd2d1_rect_f_id2d1brush_float_id2d1strokestyle%29
-func (obj *RenderTarget) DrawRectangle(rect *Rect, brush *Brush, strokeWidth float32, strokeStyle *StrokeStyle) {
-	syscall.Syscall6(obj.vmt().DrawRectangle, 5, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(rect)), uintptr(unsafe.Pointer(brush)), uintptr(*(*uint32)(unsafe.Pointer(&strokeWidth))), uintptr(unsafe.Pointer(strokeStyle)), 0)
+func (obj *RenderTarget) DrawRectangle(rect Rect, brush *Brush, strokeWidth float32, strokeStyle *StrokeStyle) {
+	syscall.Syscall6(obj.vmt().DrawRectangle, 5, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(&rect)), uintptr(unsafe.Pointer(brush)), uintptr(*(*uint32)(unsafe.Pointer(&strokeWidth))), uintptr(unsafe.Pointer(strokeStyle)), 0)
 }
 
 // FillRectangle https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1rendertarget-fillrectangle%28constd2d1_rect_f_id2d1brush%29
-func (obj *RenderTarget) FillRectangle(rect *Rect, brush *Brush) {
-	syscall.Syscall(obj.vmt().FillRectangle, 3, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(rect)), uintptr(unsafe.Pointer(brush)))
+func (obj *RenderTarget) FillRectangle(rect Rect, brush *Brush) {
+	syscall.Syscall(obj.vmt().FillRectangle, 3, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(&rect)), uintptr(unsafe.Pointer(brush)))
 }
 
 // DrawRoundedRectangle https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1rendertarget-drawroundedrectangle%28constd2d1_rounded_rect__id2d1brush_float_id2d1strokestyle%29
-func (obj *RenderTarget) DrawRoundedRectangle(roundedRect *RoundedRect, brush *Brush, strokeWidth float32, strokeStyle *StrokeStyle) {
-	syscall.Syscall6(obj.vmt().DrawRoundedRectangle, 5, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(roundedRect)), uintptr(unsafe.Pointer(brush)), uintptr(*(*uint32)(unsafe.Pointer(&strokeWidth))), uintptr(unsafe.Pointer(strokeStyle)), 0)
+func (obj *RenderTarget) DrawRoundedRectangle(roundedRect RoundedRect, brush *Brush, strokeWidth float32, strokeStyle *StrokeStyle) {
+	syscall.Syscall6(obj.vmt().DrawRoundedRectangle, 5, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(&roundedRect)), uintptr(unsafe.Pointer(brush)), uintptr(*(*uint32)(unsafe.Pointer(&strokeWidth))), uintptr(unsafe.Pointer(strokeStyle)), 0)
 }
 
 // FillRoundedRectangle https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1rendertarget-fillroundedrectangle%28constd2d1_rounded_rect_id2d1brush%29
-func (obj *RenderTarget) FillRoundedRectangle(roundedRect *RoundedRect, brush *Brush) {
-	syscall.Syscall(obj.vmt().FillRoundedRectangle, 3, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(roundedRect)), uintptr(unsafe.Pointer(brush)))
+func (obj *RenderTarget) FillRoundedRectangle(roundedRect RoundedRect, brush *Brush) {
+	syscall.Syscall(obj.vmt().FillRoundedRectangle, 3, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(&roundedRect)), uintptr(unsafe.Pointer(brush)))
 }
 
 // DrawEllipse https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1rendertarget-drawellipse%28constd2d1_ellipse__id2d1brush_float_id2d1strokestyle%29
-func (obj *RenderTarget) DrawEllipse(ellipse *Ellipse, brush *Brush, strokeWidth float32, strokeStyle *StrokeStyle) {
-	syscall.Syscall6(obj.vmt().DrawEllipse, 5, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(ellipse)), uintptr(unsafe.Pointer(brush)), uintptr(*(*uint32)(unsafe.Pointer(&strokeWidth))), uintptr(unsafe.Pointer(strokeStyle)), 0)
+func (obj *RenderTarget) DrawEllipse(ellipse Ellipse, brush *Brush, strokeWidth float32, strokeStyle *StrokeStyle) {
+	syscall.Syscall6(obj.vmt().DrawEllipse, 5, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(&ellipse)), uintptr(unsafe.Pointer(brush)), uintptr(*(*uint32)(unsafe.Pointer(&strokeWidth))), uintptr(unsafe.Pointer(strokeStyle)), 0)
 }
 
 // FillEllipse https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1rendertarget-fillellipse%28constd2d1_ellipse__id2d1brush%29
-func (obj *RenderTarget) FillEllipse(ellipse *Ellipse, brush *Brush) {
-	syscall.Syscall(obj.vmt().FillEllipse, 3, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(ellipse)), uintptr(unsafe.Pointer(brush)))
+func (obj *RenderTarget) FillEllipse(ellipse Ellipse, brush *Brush) {
+	syscall.Syscall(obj.vmt().FillEllipse, 3, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(&ellipse)), uintptr(unsafe.Pointer(brush)))
 }
 
 // DrawGeometry https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1rendertarget-drawgeometry
@@ -235,26 +235,26 @@ func (obj *RenderTarget) FillMesh(mesh *Mesh, brush *Brush) {
 }
 
 // FillOpacityMask https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1rendertarget-fillopacitymask%28id2d1bitmap_id2d1brush_d2d1_opacity_mask_content_constd2d1_rect_f__constd2d1_rect_f_%29
-func (obj *RenderTarget) FillOpacityMask(opacityMask *Bitmap, brush *Brush, content OpacityMaskContent, destinationRectangle *Rect, sourceRectangle *Rect) {
-	syscall.Syscall6(obj.vmt().FillOpacityMask, 6, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(opacityMask)), uintptr(unsafe.Pointer(brush)), uintptr(content), uintptr(unsafe.Pointer(destinationRectangle)), uintptr(unsafe.Pointer(sourceRectangle)))
+func (obj *RenderTarget) FillOpacityMask(opacityMask *Bitmap, brush *Brush, content OpacityMaskContent, destinationRectangle, sourceRectangle Rect) {
+	syscall.Syscall6(obj.vmt().FillOpacityMask, 6, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(opacityMask)), uintptr(unsafe.Pointer(brush)), uintptr(content), uintptr(unsafe.Pointer(&destinationRectangle)), uintptr(unsafe.Pointer(&sourceRectangle)))
 }
 
 // DrawBitmap https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1rendertarget-drawbitmap(id2d1bitmap_constd2d1_rect_f__float_d2d1_bitmap_interpolation_mode_constd2d1_rect_f_)
-func (obj *RenderTarget) DrawBitmap(bitmap *Bitmap, destinationRectangle *Rect, opacity float32, useLinearInterpolation bool, sourceRectangle *Rect) {
+func (obj *RenderTarget) DrawBitmap(bitmap *Bitmap, destinationRectangle Rect, opacity float32, useLinearInterpolation bool, sourceRectangle Rect) {
 	var interpolationMode uint32
 	if useLinearInterpolation {
 		interpolationMode = 1
 	}
-	syscall.Syscall6(obj.vmt().DrawBitmap, 6, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(bitmap)), uintptr(unsafe.Pointer(destinationRectangle)), uintptr(*(*uint32)(unsafe.Pointer(&opacity))), uintptr(interpolationMode), uintptr(unsafe.Pointer(sourceRectangle)))
+	syscall.Syscall6(obj.vmt().DrawBitmap, 6, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(bitmap)), uintptr(unsafe.Pointer(&destinationRectangle)), uintptr(*(*uint32)(unsafe.Pointer(&opacity))), uintptr(interpolationMode), uintptr(unsafe.Pointer(&sourceRectangle)))
 }
 
 // DrawText https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1rendertarget-drawtext%28constwchar_uint32_idwritetextformat_constd2d1_rect_f_id2d1brush_d2d1_draw_text_options_dwrite_measuring_mode%29
-func (obj *RenderTarget) DrawText(str string, textFormat *TextFormat, layoutRect *Rect, defaultForegroundBrush *Brush, options DrawTextOptions, measuringMode MeasuringMode) {
+func (obj *RenderTarget) DrawText(str string, textFormat *TextFormat, layoutRect Rect, defaultForegroundBrush *Brush, options DrawTextOptions, measuringMode MeasuringMode) {
 	s, err := syscall.UTF16FromString(str)
 	if err != nil {
 		s = []uint16{0}
 	}
-	syscall.Syscall9(obj.vmt().DrawText, 8, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(&(s[0]))), uintptr(len(s)), uintptr(unsafe.Pointer(textFormat)), uintptr(unsafe.Pointer(layoutRect)), uintptr(unsafe.Pointer(defaultForegroundBrush)), uintptr(options), uintptr(measuringMode), 0)
+	syscall.Syscall9(obj.vmt().DrawText, 8, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(&(s[0]))), uintptr(len(s)), uintptr(unsafe.Pointer(textFormat)), uintptr(unsafe.Pointer(&layoutRect)), uintptr(unsafe.Pointer(defaultForegroundBrush)), uintptr(options), uintptr(measuringMode), 0)
 }
 
 // DrawTextLayout https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1rendertarget-drawtextlayout
@@ -363,12 +363,12 @@ func (obj *RenderTarget) RestoreDrawingState(drawingStateBlock *DrawingStateBloc
 
 // PushAxisAlignedClip https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1rendertarget-pushaxisalignedclip(constd2d1_rect_f__d2d1_antialias_mode)
 // Must have a matching PopAxisAlignedClip call.
-func (obj *RenderTarget) PushAxisAlignedClip(clipRect *Rect, aliased bool) {
+func (obj *RenderTarget) PushAxisAlignedClip(clipRect Rect, aliased bool) {
 	var antialiasMode uint32
 	if aliased {
 		antialiasMode = 1
 	}
-	syscall.Syscall(obj.vmt().PushAxisAlignedClip, 3, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(clipRect)), uintptr(antialiasMode))
+	syscall.Syscall(obj.vmt().PushAxisAlignedClip, 3, uintptr(unsafe.Pointer(obj)), uintptr(unsafe.Pointer(&clipRect)), uintptr(antialiasMode))
 }
 
 // PopAxisAlignedClip https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1rendertarget-popaxisalignedclip

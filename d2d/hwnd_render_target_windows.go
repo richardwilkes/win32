@@ -20,7 +20,7 @@ type vmtHWNDRenderTarget struct {
 	vmtRenderTarget
 	CheckWindowState uintptr
 	Resize           uintptr
-	GetHwnd          uintptr
+	GetHWND          uintptr
 }
 
 func (obj *HWNDRenderTarget) vmt() *vmtHWNDRenderTarget {
@@ -40,6 +40,6 @@ func (obj *HWNDRenderTarget) Resize(pixelSize SizeU) {
 
 // HWND https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1hwndrendertarget-gethwnd
 func (obj *HWNDRenderTarget) HWND() win32.HWND {
-	ret, _, _ := syscall.Syscall(obj.vmt().GetHwnd, 1, uintptr(unsafe.Pointer(obj)), 0, 0)
+	ret, _, _ := syscall.Syscall(obj.vmt().GetHWND, 1, uintptr(unsafe.Pointer(obj)), 0, 0)
 	return win32.HWND(ret)
 }

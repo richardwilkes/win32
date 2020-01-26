@@ -193,3 +193,12 @@ type GlyphRun struct {
 	IsSideways    int32
 	BidiLevel     uint32
 }
+
+// DrawingStateDescription https://docs.microsoft.com/en-us/windows/win32/api/d2d1/ns-d2d1-d2d1_drawing_state_description
+type DrawingStateDescription struct {
+	AntialiasMode     uint32 // 0 = Per Primitive, 1 = Aliased
+	TextAntialiasMode TextAntialiasMode
+	Tag1              Tag
+	Tag2              Tag
+	Transform         Matrix3x2
+}

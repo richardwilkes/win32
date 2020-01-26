@@ -33,7 +33,7 @@ type vmtFactory struct {
 	CreateStrokeStyle              uintptr
 	CreateDrawingStateBlock        uintptr
 	CreateWicBitmapRenderTarget    uintptr
-	CreateHwndRenderTarget         uintptr
+	CreateHWNDRenderTarget         uintptr
 	CreateDxgiSurfaceRenderTarget  uintptr
 	CreateDCRenderTarget           uintptr
 }
@@ -151,10 +151,10 @@ func (f *Factory) CreateWicBitmapRenderTarget(target *WicBitmap, renderTargetPro
 	return renderTarget
 }
 
-// CreateHwndRenderTarget https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1factory-createhwndrendertarget(constd2d1_render_target_properties_constd2d1_hwnd_render_target_properties_id2d1hwndrendertarget)
-func (f *Factory) CreateHwndRenderTarget(renderTargetProperties *RenderTargetProperties, hwndRenderTargetProperties *HWNDRenderTargetProperties) *HWNDRenderTarget {
+// CreateHWNDRenderTarget https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1factory-createhwndrendertarget(constd2d1_render_target_properties_constd2d1_hwnd_render_target_properties_id2d1hwndrendertarget)
+func (f *Factory) CreateHWNDRenderTarget(renderTargetProperties *RenderTargetProperties, hwndRenderTargetProperties *HWNDRenderTargetProperties) *HWNDRenderTarget {
 	var hwndRenderTarget *HWNDRenderTarget
-	if ret, _, _ := syscall.Syscall6(f.vmt().CreateHwndRenderTarget, 4, uintptr(unsafe.Pointer(f)), uintptr(unsafe.Pointer(renderTargetProperties)), uintptr(unsafe.Pointer(hwndRenderTargetProperties)), uintptr(unsafe.Pointer(&hwndRenderTarget)), 0, 0); ret != win32.S_OK {
+	if ret, _, _ := syscall.Syscall6(f.vmt().CreateHWNDRenderTarget, 4, uintptr(unsafe.Pointer(f)), uintptr(unsafe.Pointer(renderTargetProperties)), uintptr(unsafe.Pointer(hwndRenderTargetProperties)), uintptr(unsafe.Pointer(&hwndRenderTarget)), 0, 0); ret != win32.S_OK {
 		return nil
 	}
 	return hwndRenderTarget
