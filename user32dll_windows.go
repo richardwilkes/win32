@@ -78,7 +78,7 @@ var (
 
 // AdjustWindowRectEx https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-adjustwindowrectex
 func AdjustWindowRectEx(rect *RECT, style DWORD, hasMenu bool, exStyle DWORD) {
-	adjustWindowRectEx.Call(uintptr(unsafe.Pointer(rect)), uintptr(style), uintptr(ToSysBool(hasMenu)), uintptr(exStyle)) //nolint:errcheck
+	adjustWindowRectEx.Call(uintptr(unsafe.Pointer(rect)), uintptr(style), ToSysBool(hasMenu), uintptr(exStyle)) //nolint:errcheck
 }
 
 // BeginPaint https://docs.microsoft.com/en-us/windows/desktop/api/Winuser/nf-winuser-beginpaint

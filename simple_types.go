@@ -1,7 +1,6 @@
 package win32
 
-//nolint:golint
-// https://docs.microsoft.com/en-us/windows/desktop/WinProg/windows-data-types
+// Simple types https://docs.microsoft.com/en-us/windows/desktop/WinProg/windows-data-types
 type (
 	ATOM                  uint16
 	BOOL                  int16

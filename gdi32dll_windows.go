@@ -97,7 +97,7 @@ func CreateDIBSection(hdc HDC, pbmi *BITMAPINFOHEADER, usage uint32, ppvBits *un
 
 // CreateFont https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-createfontw
 func CreateFont(height, width, escapement, orientation, weight, italic, underline, strikeOut, charSet, outPrecision, clipPrecision, quality, pitchAndFamily int, faceName string) HFONT {
-	if str, err := syscall.UTF16FromString(string(faceName)); err == nil {
+	if str, err := syscall.UTF16FromString(faceName); err == nil {
 		ret, _, _ := createFontW.Call(uintptr(height), uintptr(width), uintptr(escapement), uintptr(orientation), uintptr(weight), uintptr(italic), uintptr(underline), uintptr(strikeOut), uintptr(charSet), uintptr(outPrecision), uintptr(clipPrecision), uintptr(quality), uintptr(pitchAndFamily), uintptr(unsafe.Pointer(&str[0])))
 		return HFONT(ret)
 	}
@@ -171,7 +171,7 @@ func GetDeviceCaps(hdc HDC, index int) int {
 
 // GetTextExtentPoint https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-gettextextentpoint32w
 func GetTextExtentPoint(hdc HDC, text string, size *SIZE) {
-	if str, err := syscall.UTF16FromString(string(text)); err == nil {
+	if str, err := syscall.UTF16FromString(text); err == nil {
 		getTextExtentPoint32W.Call(uintptr(hdc), uintptr(unsafe.Pointer(&str[0])), uintptr(len(str)), uintptr(unsafe.Pointer(size)))
 	}
 }
@@ -284,7 +284,7 @@ func StrokePath(hdc HDC) {
 
 // TextOut https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-textoutw
 func TextOut(hdc HDC, x, y int, text string) {
-	if str, err := syscall.UTF16FromString(string(text)); err == nil {
+	if str, err := syscall.UTF16FromString(text); err == nil {
 		textOutW.Call(uintptr(hdc), uintptr(x), uintptr(y), uintptr(unsafe.Pointer(&str[0])), uintptr(len(str)))
 	}
 }
